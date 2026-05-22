@@ -11,6 +11,7 @@ dependencies = [
     "PySide6",
     "QtPy",
     "QtAwesome",
+    "Markdown"
 ]
 
 [project.scripts]

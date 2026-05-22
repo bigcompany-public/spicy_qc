@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from qtpy.QtCore import Qt, Signal
 from qtpy.QtWidgets import (
     QAbstractItemView,
@@ -17,6 +19,9 @@ from spicy_qc.api import Tag
 from spicy_qc.gui.utils import get_qt_app, get_qta_icon
 from spicy_qc.widgets.container import ContainerDialog, ContainerWidget
 from spicy_qc.widgets.tag_widget import TagWidget
+
+if TYPE_CHECKING:
+    from spicy_qc.widgets.spicyqc_widget import SpicyQcWidget
 
 
 class TagListWidget(QFrame):
@@ -105,17 +110,22 @@ class TagList(QListWidget):
 class TagFilterWidget(QWidget):
     confirmed: Signal = Signal(object)
 
-    def __init__(self, tags: list[Tag]):
+    def __init__(self, tags: list[Tag], spicyqc_widget: SpicyQcWidget):
         super().__init__()
         self.tags = sorted(tags, key=lambda tag: tag.tag)
+        self.spicyqc_widget = spicyqc_widget
         self.setup_ui()
         self.setup_initial_state()
+        self.setup_signals()
 
     def setup_ui(self) -> None:
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         self.list_widget = TagList(self)
         layout.addWidget(self.list_widget)
+
+    def setup_signals(self):
+        self.list_widget.itemSelectionChanged.connect(self.spicyqc_widget.update_visible_columns)
 
     def setup_initial_state(self):
         self.update_items()

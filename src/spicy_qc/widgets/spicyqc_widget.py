@@ -16,9 +16,7 @@ from spicy_qc.widgets.tag_filter_widget import TagFilterWidget
 
 
 class SpicyQcWidget(QWidget):
-    def __init__(
-        self, criterions: list[Criterion], tags: list[Tag], is_preset: bool = False
-    ):
+    def __init__(self, criterions: list[Criterion], tags: list[Tag], is_preset: bool = False):
         super().__init__()
         self.criterions = criterions
         self.tags = tags
@@ -68,9 +66,7 @@ class SpicyQcWidget(QWidget):
         # Filtering Options
         self.filtering_frame = QFrame()
         self.filtering_frame.setProperty("depth", "0")
-        self.filtering_frame.setSizePolicy(
-            QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        )
+        self.filtering_frame.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed))
         self._layout.addWidget(self.filtering_frame)
         filtering_layout = QVBoxLayout(self.filtering_frame)
         label_filters = QLabel("Filters")
@@ -88,7 +84,7 @@ class SpicyQcWidget(QWidget):
         filter_form_layout.addRow("QuickSearch", self.line_edit_search)
 
         ## Tags
-        self.tag_filter_widget = TagFilterWidget(tags=self.tags)
+        self.tag_filter_widget = TagFilterWidget(tags=self.tags, spicyqc_widget=self)
         height = 70 if len(self.tags) > 7 else 35
         self.tag_filter_widget.setFixedHeight(height)
         filter_form_layout.addRow("Tags", self.tag_filter_widget)
@@ -98,9 +94,7 @@ class SpicyQcWidget(QWidget):
         criterion_frame = QFrame()
         criterion_frame.setProperty("depth", "0")
         criterion_frame.setMinimumHeight(20)
-        criterion_frame.setSizePolicy(
-            QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        )
+        criterion_frame.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding))
         criterion_frame_layout = QVBoxLayout(criterion_frame)
         criterion_frame_layout.setContentsMargins(2, 2, 2, 2)
         self._layout.addWidget(criterion_frame)
@@ -117,23 +111,17 @@ class SpicyQcWidget(QWidget):
     def update_visible_columns(self):
         for row in range(self.table_widget.rowCount()):
             criterion_widget = self.table_widget.get_criterion_widget_at_row(row)
-            self.table_widget.setRowHidden(
-                row, not self.should_be_visible(criterion_widget)
-            )
+            self.table_widget.setRowHidden(row, not self.should_be_visible(criterion_widget))
 
     def create_criterion_widgets(self):
         for criterion in self.criterions:
             self.add_criterion_widget(criterion)
 
     def should_be_visible(self, criterion_widget: CriterionWidget) -> bool:
-        return self.matches_tag_selection(criterion_widget) and self.matches_search(
-            criterion_widget
-        )
+        return self.matches_tag_selection(criterion_widget) and self.matches_search(criterion_widget)
 
     def matches_tag_selection(self, criterion_widget: CriterionWidget) -> bool:
-        return any(
-            [tag in self.selected_tag_names for tag in criterion_widget.criterion.tags]
-        )
+        return any([tag in self.selected_tag_names for tag in criterion_widget.criterion.tags])
 
     def matches_search(self, criterion_widget: CriterionWidget) -> bool:
         search_string = self.line_edit_search.text().lower().strip()
@@ -147,9 +135,7 @@ class SpicyQcWidget(QWidget):
         # Filter by tag
         if self.selected_tag_names:
             for widget in self.criterion_widgets:
-                if any(
-                    [tag in self.selected_tag_names for tag in widget.criterion.tags]
-                ):
+                if any([tag in self.selected_tag_names for tag in widget.criterion.tags]):
                     filtered_widgets.append(widget)
         else:
             filtered_widgets = self.criterion_widgets.copy()
@@ -158,9 +144,7 @@ class SpicyQcWidget(QWidget):
         search_string = self.line_edit_search.text().lower()
         if search_string:
             filtered_widgets = [
-                widget
-                for widget in filtered_widgets
-                if search_string in widget.criterion.label.lower()
+                widget for widget in filtered_widgets if search_string in widget.criterion.label.lower()
             ]
 
         return filtered_widgets
@@ -177,9 +161,7 @@ class SpicyQcWidget(QWidget):
         # label item
         label_item = QTableWidgetItem()
         label_item.setText(criterion_widget.criterion.label)
-        self.table_widget.setItem(
-            row_number, self.table_widget._label_column_index, label_item
-        )
+        self.table_widget.setItem(row_number, self.table_widget._label_column_index, label_item)
 
         # criterion item
         criterion_item = CriterionTableItem()
@@ -189,12 +171,8 @@ class SpicyQcWidget(QWidget):
         criterion_item.criterion_widget = criterion_widget
 
         # Add item & widget to the table
-        self.table_widget.setItem(
-            row_number, self.table_widget._criterion_column_index, criterion_item
-        )
-        self.table_widget.setCellWidget(
-            row_number, self.table_widget._criterion_column_index, criterion_widget
-        )
+        self.table_widget.setItem(row_number, self.table_widget._criterion_column_index, criterion_item)
+        self.table_widget.setCellWidget(row_number, self.table_widget._criterion_column_index, criterion_widget)
 
         # Update row height once all widgets are properly inserted to the table
         criterion_widget.update_row_height()

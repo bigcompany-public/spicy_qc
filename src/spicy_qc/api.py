@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import sys
+import time
 import traceback
 from contextlib import redirect_stdout
 from dataclasses import dataclass
@@ -55,25 +56,38 @@ class Criterion:
         print(warning.message)
         self.warnings.append(warning)
 
-    def verify(self):
-        # Clear Warnings
+    def clear_warnings(self):
         self.warnings = []
 
-        # Capture stdout to extract lines that are related to this Criterion
+    def verify(self):
+        self.clear_warnings()
+        self.run_verification_while_capturing_stdout()
+
+    def run_verification_while_capturing_stdout(self):
+        print("." * 30)
         f = TeeStream(sys.stdout)
         with redirect_stdout(f):
-            print(f"Verifying {self.label}")
-            try:
-                self.verify_callback(self)
-                self.status = CriterionStatus.OK
-            except:  # noqa: E722
-                print(traceback.format_exc())
-                self.status = CriterionStatus.ERROR
+            self.run_verification_with_timer()
+        self.logs = f.getvalue().strip()
+
+    def run_verification_with_timer(self):
+        start_time = time.perf_counter()
+        self.run_verification_and_set_status()
+        end_time = time.perf_counter()
+        total_time = end_time - start_time
+        print(f"Verification took {total_time:.4f} seconds")
+
+    def run_verification_and_set_status(self):
+        print(f"Verifying {self.label}")
+        try:
+            self.verify_callback(self)
+            self.status = CriterionStatus.OK
+        except:  # noqa: E722
+            print(traceback.format_exc().strip())
+            self.status = CriterionStatus.ERROR
 
         if self.warnings:
             self.status = CriterionStatus.WARNING
-
-        self.logs = f.getvalue().strip()
 
 
 class Warning:
@@ -87,7 +101,7 @@ class TeeStream(io.StringIO):
 
     def __init__(self, target):
         super().__init__()
-        self._target = target
+        self._target: io.StringIO = target
 
     def write(self, s):
         self._target.write(s)

@@ -17,6 +17,7 @@ def function_with_warnings(criterion: Criterion):
 
 
 def function_with_error(criterion: Criterion):
+    print("Trying a triple backflip... Just watch !")
     raise RuntimeError("FUK DIS SHEET")
 
 

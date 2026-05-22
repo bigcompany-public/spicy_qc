@@ -70,6 +70,7 @@ class TagList(QListWidget):
         self.setHorizontalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.setResizeMode(QListWidget.ResizeMode.Adjust)
+        self.setSortingEnabled(False)
 
         # Signals
         self.itemSelectionChanged.connect(self.selection_changed)
@@ -106,7 +107,7 @@ class TagFilterWidget(QWidget):
 
     def __init__(self, tags: list[Tag]):
         super().__init__()
-        self.tags = tags
+        self.tags = sorted(tags, key=lambda tag: tag.tag)
         self.setup_ui()
         self.setup_initial_state()
 

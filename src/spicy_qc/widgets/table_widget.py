@@ -10,7 +10,8 @@ from qtpy.QtWidgets import (
 )
 
 if TYPE_CHECKING:
-    from spicy_qc.widgets.spicy_qc_widget import SpicyQcWidget
+    from spicy_qc.widgets.criterion_widget import CriterionTableItem, CriterionWidget
+    from spicy_qc.widgets.spicyqc_widget import SpicyQcWidget
 
 
 class CriterionTableWidget(QTableWidget):
@@ -36,3 +37,9 @@ class CriterionTableWidget(QTableWidget):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         for i in range(len(self._columns) - 1):
             self.setColumnHidden(i, True)
+
+    def get_criterion_widget_at_row(self, row: int) -> CriterionWidget:
+        return self.get_criterion_item_at_row(row).criterion_widget
+
+    def get_criterion_item_at_row(self, row: int) -> CriterionTableItem:
+        return self.item(row, self._criterion_column_index)  # type: ignore

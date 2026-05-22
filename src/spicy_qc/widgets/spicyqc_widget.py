@@ -28,6 +28,14 @@ class SpicyQcWidget(QWidget):
         self.criterion_widgets: list[CriterionWidget] = []
         self.setup_ui()
         self.setup_initial_state()
+        self.setup_signals()
+
+    def setup_initial_state(self):
+        self.select_all_tags()
+        self.create_criterion_widgets()
+
+    def select_all_tags(self):
+        self.tag_filter_widget.list_widget.selectAll()
 
     def ensure_unique_tags(self):
         """Raises an error if a tag name is used multiple time"""
@@ -100,35 +108,93 @@ class SpicyQcWidget(QWidget):
         self.table_widget = CriterionTableWidget(self)
         criterion_frame_layout.addWidget(self.table_widget)
 
-    def setup_initial_state(self):
-        self.update_items()
+    def setup_signals(self):
+        self.line_edit_search.textChanged.connect(self.line_edit_search_changed)
 
-    def update_items(self):
+    def line_edit_search_changed(self):
+        self.update_visible_columns()
+
+    def update_visible_columns(self):
+        for row in range(self.table_widget.rowCount()):
+            criterion_widget = self.table_widget.get_criterion_widget_at_row(row)
+            self.table_widget.setRowHidden(
+                row, not self.should_be_visible(criterion_widget)
+            )
+
+    def create_criterion_widgets(self):
         for criterion in self.criterions:
-            self.add_criterion(criterion)
+            self.add_criterion_widget(criterion)
 
-    def add_criterion(self, criterion: Criterion):
+    def should_be_visible(self, criterion_widget: CriterionWidget) -> bool:
+        return self.matches_tag_selection(criterion_widget) and self.matches_search(
+            criterion_widget
+        )
+
+    def matches_tag_selection(self, criterion_widget: CriterionWidget) -> bool:
+        return any(
+            [tag in self.selected_tag_names for tag in criterion_widget.criterion.tags]
+        )
+
+    def matches_search(self, criterion_widget: CriterionWidget) -> bool:
+        search_string = self.line_edit_search.text().lower().strip()
+        if not search_string:
+            return True
+        return search_string in criterion_widget.criterion.label.lower()
+
+    def get_criterion_widgets_to_show(self) -> list[CriterionWidget]:
+        filtered_widgets: list[CriterionWidget] = []
+
+        # Filter by tag
+        if self.selected_tag_names:
+            for widget in self.criterion_widgets:
+                if any(
+                    [tag in self.selected_tag_names for tag in widget.criterion.tags]
+                ):
+                    filtered_widgets.append(widget)
+        else:
+            filtered_widgets = self.criterion_widgets.copy()
+
+        # Filter by search
+        search_string = self.line_edit_search.text().lower()
+        if search_string:
+            filtered_widgets = [
+                widget
+                for widget in filtered_widgets
+                if search_string in widget.criterion.label.lower()
+            ]
+
+        return filtered_widgets
+
+    @property
+    def selected_tag_names(self) -> list[str]:
+        return self.tag_filter_widget.selected_tags
+
+    def add_criterion_widget(self, criterion: Criterion):
+        criterion_widget = CriterionWidget(criterion=criterion, spicy_qc_widget=self)
         row_number = self.table_widget.rowCount()
         self.table_widget.insertRow(row_number)
 
         # label item
-        item = QTableWidgetItem()
-        item.setText(criterion.label)
+        label_item = QTableWidgetItem()
+        label_item.setText(criterion_widget.criterion.label)
         self.table_widget.setItem(
-            row_number, self.table_widget._label_column_index, item
+            row_number, self.table_widget._label_column_index, label_item
         )
 
-        # Create criterion widget
-        item = CriterionTableItem()
-        job_widget = CriterionWidget(
-            criterion=criterion, spicy_qc_widget=self, table_item=item
-        )
+        # criterion item
+        criterion_item = CriterionTableItem()
+
+        # Pass item to the CriterionWidget and vice versa to allow row manipulation later on
+        criterion_widget.table_item = criterion_item
+        criterion_item.criterion_widget = criterion_widget
+
+        # Add item & widget to the table
         self.table_widget.setItem(
-            row_number, self.table_widget._criterion_column_index, item
+            row_number, self.table_widget._criterion_column_index, criterion_item
         )
         self.table_widget.setCellWidget(
-            row_number, self.table_widget._criterion_column_index, job_widget
+            row_number, self.table_widget._criterion_column_index, criterion_widget
         )
 
         # Update row height once all widgets are properly inserted to the table
-        job_widget.update_row_height()
+        criterion_widget.update_row_height()

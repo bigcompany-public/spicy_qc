@@ -14,7 +14,7 @@ from qtpy.QtWidgets import (
 )
 
 from spicy_qc.api import Criterion, CriterionStatus
-from spicy_qc.gui.utils import get_theme
+from spicy_qc.gui.utils import format_widgets, get_theme
 
 if TYPE_CHECKING:
     from spicy_qc.widgets.spicyqc_widget import SpicyQcWidget
@@ -75,13 +75,12 @@ class CriterionWidget(QFrame):
         self,
         criterion: Criterion,
         spicy_qc_widget: SpicyQcWidget,
-        table_item: CriterionTableItem,
     ):
         super().__init__()
         self.spicy_qc_widget = spicy_qc_widget
         self.table_widget = self.spicy_qc_widget.table_widget
         self.criterion = criterion
-        self.table_item = table_item
+        self.table_item: CriterionTableItem | None = None
         self.icon_toggle_collapsed = qtawesome.icon(
             "fa6s.caret-right", scale_factor=1.2, color=THEME["icon_color"]
         )
@@ -211,6 +210,9 @@ class CriterionWidget(QFrame):
         # Stretch
         toggle_areas_layout.addStretch()
 
+        # Format widgets
+        format_widgets(self)
+
     def setup_signals(self):
         self.verify_button.clicked.connect(self.verify_button_clicked)
 
@@ -258,4 +260,6 @@ class CriterionWidget(QFrame):
 
     @property
     def current_row(self) -> int:
+        if not self.table_item:
+            return -1
         return self.table_item.row()

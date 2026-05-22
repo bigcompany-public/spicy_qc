@@ -33,7 +33,7 @@ criterions: list[Criterion] = [
         label="Test With Warnings",
         description="Just Testing Stuff",
         verify_callback=function_with_warnings,
-        tags=["mesh"],
+        tags=["rig"],
     ),
     Criterion(
         label="Test With Error",

@@ -3,19 +3,32 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import qtawesome
-from qtpy.QtWidgets import QFrame, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QTableWidgetItem, QVBoxLayout
+from qtpy.QtWidgets import (
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QSizePolicy,
+    QTableWidgetItem,
+    QVBoxLayout,
+)
 
 from spicy_qc.api import Criterion, CriterionStatus
 from spicy_qc.gui.utils import get_theme
 
 if TYPE_CHECKING:
-    from spicy_qc.widgets.spicy_qc_widget import SpicyQcWidget
+    from spicy_qc.widgets.spicyqc_widget import SpicyQcWidget
 
 THEME = get_theme()
 
 
 class ToggleAreaButton(QPushButton):
-    def __init__(self, area_name: str, criterion_widget: CriterionWidget, collapsible_frame: QFrame):
+    def __init__(
+        self,
+        area_name: str,
+        criterion_widget: CriterionWidget,
+        collapsible_frame: QFrame,
+    ):
         super().__init__()
         self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.setProperty("status", "invisible")
@@ -36,7 +49,9 @@ class ToggleAreaButton(QPushButton):
         self.criterion_widget.update_row_height()
 
     def update_look(self):
-        self.setText(f"Show {self.area_name}" if self.collapsed else f"Hide {self.area_name}")
+        self.setText(
+            f"Show {self.area_name}" if self.collapsed else f"Hide {self.area_name}"
+        )
         icon_name = "fa6s.caret-right" if self.collapsed else "fa6s.caret-down"
         self.setIcon(qtawesome.icon(icon_name, color=THEME["icon_color"]))
 
@@ -56,17 +71,26 @@ class CriterionTableItem(QTableWidgetItem):
 
 
 class CriterionWidget(QFrame):
-    def __init__(self, criterion: Criterion, spicy_qc_widget: SpicyQcWidget, table_item: CriterionTableItem):
+    def __init__(
+        self,
+        criterion: Criterion,
+        spicy_qc_widget: SpicyQcWidget,
+        table_item: CriterionTableItem,
+    ):
         super().__init__()
         self.spicy_qc_widget = spicy_qc_widget
         self.table_widget = self.spicy_qc_widget.table_widget
         self.criterion = criterion
         self.table_item = table_item
-        self.icon_toggle_collapsed = qtawesome.icon("fa6s.caret-right", scale_factor=1.2, color=THEME["icon_color"])
-        self.icon_toggle_expanded = qtawesome.icon("fa6s.caret-down", scale_factor=1.2, color=THEME["icon_color"])
+        self.icon_toggle_collapsed = qtawesome.icon(
+            "fa6s.caret-right", scale_factor=1.2, color=THEME["icon_color"]
+        )
+        self.icon_toggle_expanded = qtawesome.icon(
+            "fa6s.caret-down", scale_factor=1.2, color=THEME["icon_color"]
+        )
         self.collapsed_height: int = 10
-        self.status = CriterionStatus.WAITING
         self.setup_ui()
+        self.setup_signals()
 
     def setup_ui(self):
         # Add a container with a few pixels of margin to make the selection more visually clear
@@ -163,7 +187,9 @@ class CriterionWidget(QFrame):
         self.documentation_frame.setHidden(True)
 
         # Toggle Assistant Button
-        self.toggle_assistant_button = ToggleAreaButton("assistant", self, self.assistant_frame)
+        self.toggle_assistant_button = ToggleAreaButton(
+            "assistant", self, self.assistant_frame
+        )
         toggle_areas_layout.addWidget(self.toggle_assistant_button)
         if not self.criterion.fixing_assistant:
             self.toggle_assistant_button.setDisabled(True)
@@ -175,7 +201,9 @@ class CriterionWidget(QFrame):
             self.toggle_logs_button.setDisabled(True)
 
         # Toggle Documentation Button
-        self.toggle_documentation_button = ToggleAreaButton("documentation", self, self.documentation_frame)
+        self.toggle_documentation_button = ToggleAreaButton(
+            "documentation", self, self.documentation_frame
+        )
         toggle_areas_layout.addWidget(self.toggle_documentation_button)
         if not self.criterion.documentation:
             self.toggle_documentation_button.setDisabled(True)
@@ -183,13 +211,22 @@ class CriterionWidget(QFrame):
         # Stretch
         toggle_areas_layout.addStretch()
 
+    def setup_signals(self):
+        self.verify_button.clicked.connect(self.verify_button_clicked)
+
+    def verify_button_clicked(self):
+        self.criterion.verify()
+        self.update_status_label()
+
     def update_row_height(self):
         top_height = 80
         assistant_height = self.assistant_frame.height() + self.main_layout.spacing()
         assistant_multiplier = int(self.assistant_frame.isVisible())
         log_height = self.log_frame.height() + self.main_layout.spacing()
         log_multiplier = int(self.log_frame.isVisible())
-        documentation_height = self.documentation_frame.height() + self.main_layout.spacing()
+        documentation_height = (
+            self.documentation_frame.height() + self.main_layout.spacing()
+        )
         documentation_multiplier = int(self.documentation_frame.isVisible())
 
         total_height = (
@@ -206,14 +243,14 @@ class CriterionWidget(QFrame):
             CriterionStatus.OK: "#09C729",
             CriterionStatus.WARNING: "#FFD000",
             CriterionStatus.ERROR: "#FF0000",
-        }[self.status]
+        }[self.criterion.status]
 
         icon_name = {
             CriterionStatus.WAITING: "ri.question-fill",
             CriterionStatus.OK: "ri.checkbox-circle-fill",
             CriterionStatus.WARNING: "ri.error-warning-fill",
-            CriterionStatus.ERROR: "fa6s.skull-crossbones",
-        }[self.status]
+            CriterionStatus.ERROR: "ri.error-warning-fill",
+        }[self.criterion.status]
         icon = qtawesome.icon(icon_name, color=color)
         size = self.status_label.width()
         pixmap = icon.pixmap(size, size)

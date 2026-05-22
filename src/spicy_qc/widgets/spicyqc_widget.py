@@ -58,6 +58,7 @@ class SpicyQcWidget(QWidget):
         self.tags = [tag for tag in self.tags if tag.tag in filtered_tag_names]
 
     def setup_ui(self):
+        self.setMinimumHeight(600)
         self._layout = QVBoxLayout(self)
         label_title = QLabel("SpicyQC")
         label_title.setProperty("tag", "H2")

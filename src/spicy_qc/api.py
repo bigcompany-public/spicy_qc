@@ -11,6 +11,8 @@ from typing import Any, Callable
 
 from qtpy.QtWidgets import QWidget
 
+from spicy_qc.widgets.assistant_widget import AssistantWidget
+
 
 @dataclass
 class Tag:
@@ -36,7 +38,7 @@ class Criterion:
         verify_callback: Callable,
         tags: list[str] | None = None,
         is_optional: bool = False,
-        fixing_assistant: QWidget | None = None,
+        assistant_widget: QWidget | None = None,
         documentation: str = "",
     ) -> None:
         self.label = label
@@ -44,7 +46,7 @@ class Criterion:
         self.verify_callback = verify_callback
         self.tags = tags or []
         self.is_optional = is_optional
-        self.fixing_assistant = fixing_assistant
+        self.assistant_widget = assistant_widget or AssistantWidget
         self.documentation = documentation
 
         # Set intial values

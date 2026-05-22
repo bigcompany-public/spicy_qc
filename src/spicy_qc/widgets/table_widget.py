@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
@@ -43,3 +43,6 @@ class CriterionTableWidget(QTableWidget):
 
     def get_criterion_item_at_row(self, row: int) -> CriterionTableItem:
         return self.item(row, self._criterion_column_index)  # type: ignore
+
+    def selectedItems(self) -> List[CriterionTableItem]:
+        return super().selectedItems()  # type: ignore

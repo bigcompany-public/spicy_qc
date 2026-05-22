@@ -7,10 +7,13 @@ from qtpy.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QLabel,
+    QPlainTextEdit,
     QPushButton,
+    QScrollArea,
     QSizePolicy,
     QTableWidgetItem,
     QVBoxLayout,
+    QWidget,
 )
 
 from spicy_qc.api import Criterion, CriterionStatus
@@ -42,8 +45,19 @@ class ToggleAreaButton(QPushButton):
         self.setMinimumHeight(0)
         self.setStyleSheet("margin:0px; padding:3px")
 
+    def expand_frame(self):
+        self.collapsed = False
+        self.update()
+
+    def collapse_frame(self):
+        self.collapsed = True
+        self.update()
+
     def toggle_area(self):
         self.collapsed = not self.collapsed
+        self.update()
+
+    def update(self):
         self.update_look()
         self.update_collapsible_frame()
         self.criterion_widget.update_row_height()
@@ -157,32 +171,50 @@ class CriterionWidget(QFrame):
 
         # HIDDEN Assistant Frame
         self.assistant_frame = QFrame()
-        self.assistant_frame.setFixedHeight(150)
-        self.assistant_frame.setProperty("depth", "2")
+        self.assistant_frame.setFixedHeight(170)
+        self.assistant_frame.setProperty("depth", "4")
         assistant_frame_layout = QVBoxLayout(self.assistant_frame)  # noqa: F841
+        assistant_frame_layout.setContentsMargins(5, 5, 5, 5)
         self.main_layout.addWidget(self.assistant_frame)
         self.assistant_frame.setHidden(True)
+        assistant_frame_scroll_area = QScrollArea()
+        assistant_frame_layout.addWidget(assistant_frame_scroll_area)
+        self.assistant_frame_area_contents = QWidget()
+
+        assistant_frame_scroll_area.setWidget(self.assistant_frame_area_contents)
 
         # HIDDEN Log Frame
         self.log_frame = QFrame()
-        self.log_frame.setFixedHeight(150)
-        self.log_frame.setProperty("depth", "2")
+        self.log_frame.setProperty("depth", "4")
+        self.log_frame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         log_frame_layout = QVBoxLayout(self.log_frame)  # noqa: F841
+        log_frame_layout.setContentsMargins(5, 5, 5, 5)
         self.main_layout.addWidget(self.log_frame)
         self.log_frame.setHidden(True)
 
+        self.stdout_view = QPlainTextEdit()
+        self.stdout_view.setProperty("status", "code")
+        self.stdout_view.setReadOnly(True)
+        self.stdout_view.setFixedHeight(200)
+        log_frame_layout.addWidget(self.stdout_view)
+        self.stdout_view.setPlainText("Verification was not done yet")
+
         # HIDDEN documentation Frame
         self.documentation_frame = QFrame()
-        self.documentation_frame.setFixedHeight(150)
-        self.documentation_frame.setProperty("depth", "2")
+        self.documentation_frame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.documentation_frame.setProperty("depth", "4")
         documentation_frame_layout = QVBoxLayout(self.documentation_frame)  # noqa: F841
+        documentation_frame_layout.setContentsMargins(5, 5, 5, 5)
         self.main_layout.addWidget(self.documentation_frame)
         self.documentation_frame.setHidden(True)
+        for i in range(9):
+            b = QPushButton("LOL")
+            documentation_frame_layout.addWidget(b)
 
         # Toggle Assistant Button
         self.toggle_assistant_button = ToggleAreaButton("assistant", self, self.assistant_frame)
         toggle_areas_layout.addWidget(self.toggle_assistant_button)
-        if not self.criterion.fixing_assistant:
+        if not self.criterion.assistant_widget:
             self.toggle_assistant_button.setDisabled(True)
 
         # Toggle Logs Button
@@ -195,7 +227,7 @@ class CriterionWidget(QFrame):
         self.toggle_documentation_button = ToggleAreaButton("documentation", self, self.documentation_frame)
         toggle_areas_layout.addWidget(self.toggle_documentation_button)
         if not self.criterion.documentation:
-            self.toggle_documentation_button.setDisabled(True)
+            self.toggle_documentation_button.setHidden(True)
 
         # Stretch
         toggle_areas_layout.addStretch()
@@ -203,20 +235,42 @@ class CriterionWidget(QFrame):
         # Format widgets
         format_widgets(self)
 
-    def setup_signals(self):
-        self.verify_button.clicked.connect(self.verify_button_clicked)
-
-    def verify_button_clicked(self):
+    def verify(self):
         self.criterion.verify()
         self.update_status_label()
+        self.update_stdout_line_edit()
+
+    def setup_signals(self):
+        self.verify_button.clicked.connect(self.verify_button_clicked)
+        self.toggle_assistant_button.clicked.connect(self.assistant_button_clicked)
+        self.toggle_logs_button.clicked.connect(self.logs_button_clicked)
+        self.toggle_documentation_button.clicked.connect(self.documentation_button_clicked)
+
+    def assistant_button_clicked(self):
+        self.toggle_documentation_button.collapse_frame()
+        self.toggle_logs_button.collapse_frame()
+
+    def documentation_button_clicked(self):
+        self.toggle_assistant_button.collapse_frame()
+        self.toggle_logs_button.collapse_frame()
+
+    def logs_button_clicked(self):
+        self.toggle_documentation_button.collapse_frame()
+        self.toggle_assistant_button.collapse_frame()
+
+    def verify_button_clicked(self):
+        self.spicy_qc_widget.verify_selected_criterions()
+
+    def update_stdout_line_edit(self):
+        self.stdout_view.setPlainText(self.criterion.logs)
 
     def update_row_height(self):
         top_height = 80
-        assistant_height = self.assistant_frame.height() + self.main_layout.spacing()
+        assistant_height = self.assistant_frame.sizeHint().height() + self.main_layout.spacing()
         assistant_multiplier = int(self.assistant_frame.isVisible())
-        log_height = self.log_frame.height() + self.main_layout.spacing()
+        log_height = self.log_frame.sizeHint().height() + self.main_layout.spacing()
         log_multiplier = int(self.log_frame.isVisible())
-        documentation_height = self.documentation_frame.height() + self.main_layout.spacing()
+        documentation_height = self.documentation_frame.sizeHint().height() + self.main_layout.spacing()
         documentation_multiplier = int(self.documentation_frame.isVisible())
 
         total_height = (
@@ -231,7 +285,7 @@ class CriterionWidget(QFrame):
         color = {
             CriterionStatus.WAITING: "#919191",
             CriterionStatus.OK: "#09C729",
-            CriterionStatus.WARNING: "#FFD000",
+            CriterionStatus.WARNING: "#FFAE00",
             CriterionStatus.ERROR: "#FF0000",
         }[self.criterion.status]
 

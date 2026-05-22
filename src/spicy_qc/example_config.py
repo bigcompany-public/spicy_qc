@@ -8,7 +8,7 @@ tags = [
 
 
 def function_ok(criterion: Criterion):
-    print("Tout fonctionne")
+    print("Everything works")
 
 
 def function_with_warnings(criterion: Criterion):

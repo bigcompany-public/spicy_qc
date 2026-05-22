@@ -176,3 +176,11 @@ class SpicyQcWidget(QWidget):
 
         # Update row height once all widgets are properly inserted to the table
         criterion_widget.update_row_height()
+
+    @property
+    def selected_criterion_widgets(self) -> list[CriterionWidget]:
+        return [item.criterion_widget for item in self.table_widget.selectedItems()]
+
+    def verify_selected_criterions(self):
+        for criterion_widget in self.selected_criterion_widgets:
+            criterion_widget.verify()

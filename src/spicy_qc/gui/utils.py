@@ -10,7 +10,7 @@ from qtpy.QtGui import QColor, QIcon
 from qtpy.QtWidgets import QApplication
 
 
-def get_spyciqc_icon() -> QIcon:
+def get_spicyqc_icon() -> QIcon:
     icon = qtawesome.icon(
         "fa5s.square",
         "mdi6.silverware-clean",

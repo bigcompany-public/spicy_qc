@@ -1,6 +1,20 @@
-# Markdown Documentation Cheat Sheet
+# Markdown Cheat Sheet
 
 This example will teach you the basics for the markdown syntax.
+
+---
+
+# Table of Contents
+
+1. [Titles](#titles)
+2. [Text Style](#text-style)
+3. [Lists](#lists)
+4. [Code](#code)
+5. [Links](#links)
+6. [Images](#images)
+7. [Emojis](#emojis)
+8. [Admonitions](#admonitions)
+8. [Tables](#tables)
 
 ---
 

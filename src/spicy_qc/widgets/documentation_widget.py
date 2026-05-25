@@ -21,7 +21,7 @@ CSS = f"""
     body {{
         font-family: 'Segoe UI', sans-serif;
         font-size: 14px;
-        line-height: 1;
+        line-height: 1.3;
         color: {THEME["text_color"]};
         background-color: {THEME["bg_three"]};
         max-width: 860px;
@@ -52,7 +52,7 @@ CSS = f"""
     pre code {{
         color: {THEME["text_color"]};
         font-family: 'Courier New', monospace;
-        line-height: 1.1;
+        line-height: 1.3;
         overflow-x:auto;
         tab-width: 4;
         display: block;

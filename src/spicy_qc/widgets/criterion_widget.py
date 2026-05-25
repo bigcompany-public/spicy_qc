@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import markdown
 import qtawesome
 from PySide6.QtWidgets import (
     QFrame,
@@ -13,13 +12,13 @@ from PySide6.QtWidgets import (
     QScrollArea,
     QSizePolicy,
     QTableWidgetItem,
-    QTextBrowser,
     QVBoxLayout,
     QWidget,
 )
 
 from spicy_qc.api import Criterion, CriterionStatus
 from spicy_qc.gui.utils import format_widgets, get_theme
+from spicy_qc.widgets.documentation_widget import DocumentationWidget
 
 if TYPE_CHECKING:
     from spicy_qc.widgets.spicyqc_widget import SpicyQcWidget
@@ -210,61 +209,8 @@ class CriterionWidget(QFrame):
         self.main_layout.addWidget(self.documentation_frame)
         self.documentation_frame.setHidden(True)
 
-        # Documentation is displayed as QtextBrowser, to make use of markdown syntax
-        documentation = QTextBrowser()
-        documentation.setOpenExternalLinks(True)
-        html = markdown.markdown(self.criterion.documentation, extensions=["admonition", "fenced_code", "tables"])
-        headers_color = "#33a5e7"
-        text_color = "#e6dede"
-        code_background_color = "#1f1c1c"
-        background_color = "#28282E"
-        link_color = "#33a5e7"
-
-        documentation.setStyleSheet(f"""
-        background-color:{background_color};
-        color:{text_color};
-        font-family: 'Segoe UI', sans-serif;
-        font-size: 14px;
-        """)
-
-        documentation.document().setDefaultStyleSheet(f"""
-            h1, h2, h3, h4, h5, h6 {{
-                color: {headers_color};
-            }}
-
-            code {{
-                background-color: {code_background_color};
-                font-family: 'Courier New', monospace;
-            }}
-
-            a {{
-                color: {link_color};
-                font-weight:bold;
-            }}
-
-            .admonition {{
-                border-radius: 3px;
-                padding: 5px;
-            }}
-
-            .admonition-title {{
-                font-weight: bold;
-                font-size: 18px;
-                text-decoration: underline;
-                margin:20px;
-                padding: 30px;
-            }}
-
-            /* per-type colors */
-            .note {{
-                color:{text_color};
-                background-color: #FF0000;
-            }}
-            .note .admonition-title {{
-                color: {headers_color};
-            }}
-        """)
-        documentation.setHtml(html)
+        # Documentation widget
+        documentation = DocumentationWidget(self)
         documentation_frame_layout.addWidget(documentation)
 
         # Toggle Assistant Button

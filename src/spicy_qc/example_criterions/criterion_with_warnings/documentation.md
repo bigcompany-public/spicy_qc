@@ -2,13 +2,13 @@ Here is a markdown documentation
 
 # This is a H1 Title
 
-## This is a H2 Title
-
-### This is a H3 Title
-
 This is some normal text
 
+## This is a H2 Title
+
 **This is some bold text**
+
+### This is a H3 Title
 
 *This is some italic text*
 
@@ -18,6 +18,9 @@ here is a separator
 
 ---
 
+here is some `backtick text` !
+
+
 ```python
 This is a piece of code
 ```
@@ -26,7 +29,11 @@ The documentation can include [external links](https://github.com/bigcompany-pub
 
 And images
 
-![image_alt_text]({img_path.as_posix()})
+![image_alt_text](./spicyqc_icon.png)
+
+including gifs
+
+![image_alt_text](./ok.gif)
 
 !!! note "Hello"
     this is an admonition

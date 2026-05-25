@@ -31,7 +31,7 @@ CSS = f"""
     }}
 
     code {{
-        color: {THEME["error"]};
+        color: {THEME["text_color"]};
         background-color: {THEME["bg_two"]};
         padding-top: 3px;
         padding-bottom: 3px;
@@ -54,14 +54,18 @@ CSS = f"""
     }}
 
     a {{
-        color: #569cd6;
+        color: {THEME["H2_color"]};
     }}
 
     blockquote {{
-        border-left: 4px solid #569cd6;
-        margin: 0;
-        padding-left: 16px;
-        color: #888;
+        border-left: 4px solid {THEME["text_color2"]};
+        margin-left: 0px;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        color: {THEME["text_color"]};
+        background-color: {THEME["bg_four"]};
     }}
 
     table {{
@@ -70,34 +74,60 @@ CSS = f"""
     }}
 
     th, td {{
-        border: 1px solid #444;
-        padding: 8px 12px;
+        border: 1px solid {THEME["outline"]};
+        padding: 6px;
     }}
 
     th {{
-        background-color: #2d2d2d;
+        background-color: {THEME["bg_four"]};
+    }}
+
+    td {{
+        background-color: {THEME["bg_one"]};
     }}
 
     .admonition {{
-        padding: 10px 16px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        padding-left: 6px;
+        padding-right: 6px;
         border-radius: 5px;
-        border-left: 4px solid #888;
-        margin: 16px 0;
+        border-left: 4px solid;
+        margin: 6px;
     }}
 
     .admonition-title {{
         font-weight: bold;
-        margin-bottom: 4px;
     }}
 
-    .note   {{ border-left-color: #569cd6; background-color: #1a2a3a; }}
-    .note   .admonition-title {{ color: #569cd6; }}
-    .warning {{ border-left-color: #e8a838; background-color: #2a2010; }}
-    .warning .admonition-title {{ color: #e8a838; }}
-    .tip    {{ border-left-color: #4ec94e; background-color: #0f2a0f; }}
-    .tip    .admonition-title {{ color: #4ec94e; }}
-    .danger {{ border-left-color: #e85050; background-color: #2a1010; }}
-    .danger .admonition-title {{ color: #e85050; }}
+    .note   {{
+        border-left-color: #569cd6;
+        background-color: #1a2a3a;
+    }}
+    .warning {{
+        border-left-color: #e8a838;
+        background-color: #2a2010;
+    }}
+    .tip    {{
+        border-left-color: #4ec94e;
+        background-color: #0f2a0f;
+    }}
+    .danger {{
+        border-left-color: #e85050;
+        background-color: #2a1010;
+    }}
+    .question {{
+        border-left-color: #d0a000;
+        background-color: #2a2410;
+    }}
+    .info {{
+        border-left-color: #00a0d0;
+        background-color: #0a1a2a;
+    }}
+    .example {{
+        border-left-color: #a050e8;
+        background-color: #1a0a2a;
+    }}
 """
 
 

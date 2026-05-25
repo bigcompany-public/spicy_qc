@@ -35,8 +35,28 @@ including gifs
 
 ![image_alt_text](./ok.gif)
 
-!!! note "Hello"
+!!! note
     this is an admonition
+
+!!! info
+    this is an admonition
+
+!!! tip
+    this is an admonition
+
+!!! question
+    this is an admonition
+
+!!! example
+    this is an admonition
+
+!!! warning
+    this is an admonition
+
+!!! danger
+    this is an admonition
+
+> this is a quote block
 
 this is a table
 

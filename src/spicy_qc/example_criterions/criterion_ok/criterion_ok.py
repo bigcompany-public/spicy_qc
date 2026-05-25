@@ -12,4 +12,5 @@ criterion_ok = Criterion(
     tags=["mesh", "rig", "other"],
     is_optional=False,
     assistant_widget=None,
+    documentation="# Everything is OK! \n\nIn this criterion, everything will work just fine",
 )

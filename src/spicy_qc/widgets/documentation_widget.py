@@ -200,7 +200,8 @@ class DocumentationWidget(QWebEngineView):
     def __init__(self, criterion_widget: CriterionWidget):
         self.criterion_widget = criterion_widget
         super().__init__()
-        self.setMinimumHeight(500)
+        self.setMinimumHeight(200)
+        self.setMaximumHeight(500)
         self.setPage(DocPage(self))
         self.load_markdown()
         self.loadFinished.connect(self._inject_scrollbar_style)

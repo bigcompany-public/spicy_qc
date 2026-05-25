@@ -27,9 +27,24 @@ CSS = f"""
         max-width: 860px;
     }}
 
-    h1, h2, h3 {{
+    h1, h2, h3, h4 {{
         color: {THEME["H2_color"]};
-        padding-bottom: 2px;
+    }}
+
+    h1 {{
+        font-size: 22px;
+    }}
+
+    h2 {{
+        font-size: 18px;
+    }}
+
+    h3 {{
+        font-size: 16px;
+    }}
+
+    h4 {{
+        font-size: 14px;
     }}
 
     code {{

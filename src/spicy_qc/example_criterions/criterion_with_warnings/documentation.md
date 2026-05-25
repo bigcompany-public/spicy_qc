@@ -4,7 +4,7 @@ This example will teach you the basics for the markdown syntax.
 
 ---
 
-# Table of Contents
+## Table of Contents
 
 1. [Titles](#titles)
 2. [Text Style](#text-style)
@@ -25,6 +25,7 @@ To create titles, add hashtags before the text.
 # This is an H1 Title
 ## This is an H2 Title
 ### This is an H3 Title
+#### This is an H4 Title
 
 ---
 

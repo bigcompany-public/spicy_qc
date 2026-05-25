@@ -29,11 +29,11 @@ The documentation can include [external links](https://github.com/bigcompany-pub
 
 And images
 
-![image_alt_text](./spicyqc_icon.png)
+![image_alt_text](spicyqc_icon.png)
 
 including gifs
 
-![image_alt_text](./ok.gif)
+![image_alt_text](ok.gif)
 
 !!! note
     this is an admonition

@@ -1,7 +1,7 @@
 [project]
 name = "spicy-qc"
 version = "0.1.0"
-description = "Granular quality control system with clear visual feedback, designed to help teams quickly identify, understand, and resolve issues during production"
+description = "Quality Control system with clear visual feedback, designed to help teams quickly identify, understand, and resolve issues during production"
 readme = "README.md"
 authors = [
     { name = "Tristan Languebien", email = "tlanguebien@gmail.com" }
@@ -12,6 +12,12 @@ dependencies = [
     "QtAwesome",
     "Markdown",
     "emoji"
+]
+
+[project.optional-dependencies]
+docs = [
+    "zensical",
+    "mkdocstrings-python"
 ]
 
 [project.scripts]

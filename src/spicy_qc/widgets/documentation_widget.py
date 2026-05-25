@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import emoji
 import markdown
 from PySide6.QtCore import QUrl
 from PySide6.QtWebEngineWidgets import QWebEngineView
@@ -57,17 +58,6 @@ CSS = f"""
         color: {THEME["H2_color"]};
     }}
 
-    blockquote {{
-        border-left: 4px solid {THEME["text_color2"]};
-        margin-left: 0px;
-        padding-left: 10px;
-        padding-right: 10px;
-        padding-top: 1px;
-        padding-bottom: 1px;
-        color: {THEME["text_color"]};
-        background-color: {THEME["bg_four"]};
-    }}
-
     table {{
         border-collapse: collapse;
         width: 100%;
@@ -84,6 +74,19 @@ CSS = f"""
 
     td {{
         background-color: {THEME["bg_one"]};
+    }}
+
+
+    blockquote {{
+    
+        border-left: 4px solid {THEME["text_color2"]};
+        color: {THEME["text_color"]};
+        background-color: {THEME["bg_four"]};
+        margin: 6px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        padding-left: 6px;
+        padding-right: 6px;
     }}
 
     .admonition {{
@@ -154,6 +157,7 @@ class DocumentationWidget(QWebEngineView):
     def load_markdown(self):
         doc_file = self.criterion_widget.criterion._source_file.with_name("documentation.md")
         md_text = self.criterion_widget.criterion.documentation
+        md_text = emoji.emojize(md_text, language="alias")
         html = markdown_to_html(md_text, CSS)
         base_url = QUrl.fromLocalFile(doc_file.as_posix())
         self.setHtml(html, baseUrl=base_url)

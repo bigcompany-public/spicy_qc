@@ -10,7 +10,8 @@ requires-python = ">=3.9"
 dependencies = [
     "PySide6",
     "QtAwesome",
-    "Markdown"
+    "Markdown",
+    "emoji"
 ]
 
 [project.scripts]

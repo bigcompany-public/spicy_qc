@@ -35,6 +35,8 @@ including gifs
 
 ![image_alt_text](ok.gif)
 
+You can also use emojis :rocket: :smile: :warning: :memo:
+
 !!! note
     this is an admonition
 
@@ -60,8 +62,8 @@ including gifs
 
 this is a table
 
-| t | a | g |   |   |
-|---|---|---|---|---|
-| y | o | ! |   |   |
-|   |   |   |   |   |
-|   |   |   |   |   |
+| column1 | column2 | column3 |
+|---|---|---|
+| hello | world | ! |
+| how  | are  | you  |
+| doing  | dear  | user  |

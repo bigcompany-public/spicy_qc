@@ -1,3 +1,5 @@
+import random
+
 from PySide6.QtWidgets import (
     QFormLayout,
     QFrame,
@@ -21,6 +23,7 @@ class SpicyQcWidget(QWidget):
         self.criterions = criterions
         self.tags = tags
         self.ensure_unique_tags()
+        self.create_missing_tags()
         self.filter_tags()
         self.is_preset = is_preset
         self.criterion_widgets: list[CriterionWidget] = []
@@ -42,6 +45,26 @@ class SpicyQcWidget(QWidget):
             number = tag_names.count(tag_name)
             if number > 1:
                 raise ValueError(f'Tag "{tag_name}" cannot be used multiple times')
+
+    def create_missing_tags(self):
+        colors = [
+            "#29C2AD",
+            "#2D9C5B",
+            "#327EBD",
+            "#2660A1",
+            "#352F8F",
+            "#A623B8",
+            "#8D2455",
+            "#AA2A2A",
+            "#C06C0C",
+            "#97AF11",
+        ]
+        for criterion in self.criterions:
+            for tag_name in criterion.tags:
+                available_tag_names = [tag.tag for tag in self.tags]
+                if tag_name not in available_tag_names:
+                    new_tag = Tag(tag=tag_name, tag_color=random.choice(colors))
+                    self.tags.append(new_tag)
 
     def filter_tags(self):
         """Filters out tags that are used in no Criterion"""
@@ -86,10 +109,9 @@ class SpicyQcWidget(QWidget):
 
         ## Tags
         self.tag_filter_widget = TagFilterWidget(tags=self.tags, spicyqc_widget=self)
-        height = 70 if len(self.tags) > 7 else 35
+        height = 70 if len(self.tags) > 4 else 35
         self.tag_filter_widget.setFixedHeight(height)
         filter_form_layout.addRow("Tags", self.tag_filter_widget)
-        # filtering_layout.addWidget(self.tag_filter_widget)
 
         # Criterions
         criterion_frame = QFrame()

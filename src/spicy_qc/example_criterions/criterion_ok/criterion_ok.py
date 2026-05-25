@@ -9,7 +9,7 @@ criterion_ok = Criterion(
     label="Criterion working fine",
     description="This criterion will run without warning/errors",
     verify_callback=function_ok,
-    tags=["mesh", "rig"],
+    tags=["mesh", "rig", "other"],
     is_optional=False,
     assistant_widget=None,
 )

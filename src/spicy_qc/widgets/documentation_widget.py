@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING
 import emoji
 import markdown
 from PySide6.QtCore import QUrl
+from PySide6.QtGui import QDesktopServices
+from PySide6.QtWebEngineCore import QWebEnginePage
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
 if TYPE_CHECKING:
@@ -148,10 +150,20 @@ def markdown_to_html(md_text: str, css: str) -> str:
 </html>"""
 
 
+class DocPage(QWebEnginePage):
+    def acceptNavigationRequest(self, url, nav_type, is_main_frame):
+        # Let the initial load through, intercept link clicks
+        if nav_type == QWebEnginePage.NavigationType.NavigationTypeLinkClicked:
+            QDesktopServices.openUrl(url)
+            return False  # block new page opening in the qt app
+        return True
+
+
 class DocumentationWidget(QWebEngineView):
     def __init__(self, criterion_widget: CriterionWidget):
         self.criterion_widget = criterion_widget
         super().__init__()
+        self.setPage(DocPage(self))
         self.load_markdown()
 
     def load_markdown(self):

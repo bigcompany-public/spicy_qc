@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 import io
 import sys
 import time
@@ -7,6 +8,7 @@ import traceback
 from contextlib import redirect_stdout
 from dataclasses import dataclass
 from enum import StrEnum, auto
+from pathlib import Path
 from typing import Any, Callable
 
 from qtpy.QtWidgets import QWidget
@@ -47,12 +49,22 @@ class Criterion:
         self.tags = tags or []
         self.is_optional = is_optional
         self.assistant_widget = assistant_widget or AssistantWidget
-        self.documentation = documentation
+
+        # Capture the file in which a Criterion instance was created
+        caller_frame = inspect.stack()[1]
+        self._source_file = Path(caller_frame.filename)
+
+        # Get documentation from the documentation.md file next to the criterion instance py file if none is provided
+        self.documentation = documentation or self.get_documentation()
 
         # Set intial values
         self.logs: str = "This Criterion has not been verified yet"
         self.status = CriterionStatus.WAITING
         self.warnings: list[Warning] = []
+
+    def get_documentation(self) -> str:
+        path = self._source_file.with_name("documentation.md")
+        return path.read_text()
 
     def add_warning(self, warning: Warning):
         print(warning.message)

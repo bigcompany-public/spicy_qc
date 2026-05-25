@@ -80,8 +80,7 @@ CSS = f"""
 
 
     blockquote {{
-    
-        border-left: 4px solid {THEME["text_color2"]};
+        border-left: 5px solid {THEME["text_color2"]};
         color: {THEME["text_color"]};
         background-color: {THEME["bg_four"]};
         margin: 6px;
@@ -97,7 +96,7 @@ CSS = f"""
         padding-left: 6px;
         padding-right: 6px;
         border-radius: 5px;
-        border-left: 4px solid;
+        border-left: 3px solid;
         margin: 6px;
     }}
 

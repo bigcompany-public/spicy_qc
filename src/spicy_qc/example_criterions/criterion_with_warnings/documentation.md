@@ -1,66 +1,114 @@
-Here is a markdown documentation
+# Markdown Documentation Cheat Sheet
 
-# This is a H1 Title
-
-This is some normal text
-
-## This is a H2 Title
-
-**This is some bold text**
-
-### This is a H3 Title
-
-*This is some italic text*
-
-<span style="color:#BB1111">This is some colored text</span>
-
-here is a separator
+This example will teach you the basics for the markdown syntax.
 
 ---
 
-here is some `backtick text` !
+## Titles
 
+To create titles, add hashtags before the text.
 
-```python
-This is a piece of code
+# This is an H1 Title
+## This is an H2 Title
+### This is an H3 Title
+
+---
+
+## Text Style
+
+You have a few options add some personality to your text
+
+**bold text**
+*italic text*
+<span style="color:#ff0000">red colored text</span>
+
+---
+
+## Lists
+
+You can create bullet point lists: 
+
+- item1
+- item2
+- item3
+
+---
+
+## Code
+
+code blocks can be inserted like this: 
+
+Here is an `inline code block`
+
+```
+This is a multiline
+block of code
 ```
 
-The documentation can include [external links](https://github.com/bigcompany-public/spicy_qc)
+---
 
-And images
+## Links
+
+The documentation can include external links
+
+[external link to github](https://github.com/bigcompany-public/spicy_qc)
+
+---
+
+## Images
+
+You can add images (including gifs)
 
 ![image_alt_text](spicyqc_icon.png)
-
-including gifs
-
 ![image_alt_text](ok.gif)
 
-You can also use emojis :rocket: :smile: :warning: :memo:
+---
+
+## Emojis
+
+You can also use emojis
+
+:rocket: :smile: :warning: :memo:
+
+---
+
+## Admonitions
+
+Various admonitions are at your disposal
 
 !!! note
-    this is an admonition
+    this is a note admonition
 
 !!! info
-    this is an admonition
+    this is an info admonition
 
 !!! tip
-    this is an admonition
+    this is a tip admonition
 
 !!! question
-    this is an admonition
+    this is a question admonition
 
 !!! example
-    this is an admonition
+    this is an example admonition
 
 !!! warning
-    this is an admonition
+    this is a warning admonition
 
 !!! danger
-    this is an admonition
+    this is a danger admonition
+
+!!! result
+    this is a result admonition
+
+Alternatively, you can use quote blocks
 
 > this is a quote block
 
-this is a table
+---
+
+## Tables
+
+This is how you can create a table
 
 | column1 | column2 | column3 |
 |---|---|---|

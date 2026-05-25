@@ -29,7 +29,6 @@ CSS = f"""
 
     h1, h2, h3 {{
         color: {THEME["H2_color"]};
-        border-bottom: 1px solid {THEME["outline2"]};
         padding-bottom: 2px;
     }}
 
@@ -48,12 +47,15 @@ CSS = f"""
         padding: 12px;
         border-radius: 3px;
         border-left: 1px solid {THEME["text_color"]};
-        overflow-x: auto;
     }}
 
     pre code {{
         color: {THEME["text_color"]};
         font-family: 'Courier New', monospace;
+        line-height: 1.1;
+        overflow-x:auto;
+        tab-width: 4;
+        display: block;
     }}
 
     a {{
@@ -132,6 +134,11 @@ CSS = f"""
         border-left-color: #a050e8;
         background-color: #1a0a2a;
     }}
+
+    .result {{
+        border-left-color: #ffffff55;
+        background-color: #ffffff07;
+    }}
 """
 
 
@@ -162,6 +169,7 @@ class DocumentationWidget(QWebEngineView):
     def __init__(self, criterion_widget: CriterionWidget):
         self.criterion_widget = criterion_widget
         super().__init__()
+        self.setMinimumHeight(500)
         self.setPage(DocPage(self))
         self.load_markdown()
 

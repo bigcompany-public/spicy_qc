@@ -261,7 +261,13 @@ class CriterionWidget(QFrame):
         self.toggle_assistant_button.collapse_frame()
 
     def verify_button_clicked(self):
+        self.update_selection()
         self.spicy_qc_widget.verify_selected_criterions()
+
+    def update_selection(self):
+        if self not in self.spicy_qc_widget.selected_criterion_widgets:
+            self.table_widget.clearSelection()
+            self.table_widget.selectRow(self.current_row)
 
     def update_stdout_line_edit(self):
         self.stdout_view.setPlainText(self.criterion.logs)
@@ -285,17 +291,17 @@ class CriterionWidget(QFrame):
 
     def update_status_label(self):
         color = {
-            CriterionStatus.WAITING: "#919191",
-            CriterionStatus.OK: "#09C729",
-            CriterionStatus.WARNING: "#FFAE00",
-            CriterionStatus.ERROR: "#FF0000",
+            CriterionStatus.WAITING: THEME["disabled"],
+            CriterionStatus.OK: THEME["ok"],
+            CriterionStatus.WARNING: THEME["warning"],
+            CriterionStatus.ERROR: THEME["error"],
         }[self.criterion.status]
 
         icon_name = {
             CriterionStatus.WAITING: "ri.question-fill",
             CriterionStatus.OK: "ri.checkbox-circle-fill",
             CriterionStatus.WARNING: "ri.error-warning-fill",
-            CriterionStatus.ERROR: "ri.error-warning-fill",
+            CriterionStatus.ERROR: "ri.close-circle-fill",
         }[self.criterion.status]
         icon = qtawesome.icon(icon_name, color=color)
         size = self.status_label.width()

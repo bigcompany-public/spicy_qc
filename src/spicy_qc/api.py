@@ -64,6 +64,8 @@ class Criterion:
 
     def get_documentation(self) -> str:
         path = self._source_file.with_name("documentation.md")
+        if not path.exists():
+            return ""
         return path.read_text()
 
     def add_warning(self, warning: Warning):

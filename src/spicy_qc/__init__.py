@@ -1,18 +1,3 @@
-from spicy_qc.api import Criterion, Tag
-from spicy_qc.gui.utils import get_qt_app, get_spicyqc_icon
-from spicy_qc.widgets.container import ContainerDialog, ContainerWidget
-from spicy_qc.widgets.spicyqc_widget import SpicyQcWidget
+from spicy_qc.main import get_config_from_path, show_spicyqc_dialog
 
-
-def show_spicyqc_dialog(criterions: list[Criterion], tags: list[Tag]) -> None:
-    app = get_qt_app()  # noqa: F841
-    widget = SpicyQcWidget(criterions, tags)
-    container = ContainerWidget(widget, title="SpicyQC", icon=get_spicyqc_icon())
-    dialog = ContainerDialog(container)
-    dialog.exec()
-
-
-def main():
-    from spicy_qc.example_config import criterions, tags
-
-    show_spicyqc_dialog(criterions, tags)
+__all__ = ["get_config_from_path", "show_spicyqc_dialog"]

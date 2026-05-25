@@ -8,7 +8,8 @@ from spicy_qc.widgets.container import ContainerDialog, ContainerWidget
 from spicy_qc.widgets.spicyqc_widget import SpicyQcWidget
 
 
-def get_config_from_path(path: Path) -> tuple[list[Tag], list[Criterion]]:
+def get_config_from_path(path: Path | str) -> tuple[list[Tag], list[Criterion]]:
+    path = Path(path)
     tags = get_tags_from_path(path)
     criterions = get_criterions_from_path(path)
     return (tags, criterions)

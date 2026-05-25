@@ -99,7 +99,7 @@ CSS = f"""
     blockquote {{
         border-left: 5px solid {THEME["text_color2"]};
         color: {THEME["text_color"]};
-        background-color: {THEME["bg_four"]};
+        background-color: {THEME["text_color2"]}20;
         margin: 6px;
         padding-top: 1px;
         padding-bottom: 1px;
@@ -123,36 +123,36 @@ CSS = f"""
 
     .note   {{
         border-left-color: #569cd6;
-        background-color: #1a2a3a;
+        background-color: #569cd612;
     }}
     .warning {{
         border-left-color: #e8a838;
-        background-color: #2a2010;
+        background-color: #e8a83812;
     }}
     .tip    {{
         border-left-color: #4ec94e;
-        background-color: #0f2a0f;
+        background-color: #4ec94e12;
     }}
     .danger {{
         border-left-color: #e85050;
-        background-color: #2a1010;
+        background-color: #e8505012;
     }}
     .question {{
         border-left-color: #d0a000;
-        background-color: #2a2410;
+        background-color: #d0a00012;
     }}
     .info {{
         border-left-color: #00a0d0;
-        background-color: #0a1a2a;
+        background-color: #00a0d012;
     }}
     .example {{
         border-left-color: #a050e8;
-        background-color: #1a0a2a;
+        background-color: #a050e812;
     }}
 
     .result {{
-        border-left-color: #ffffff55;
-        background-color: #ffffff07;
+        border-left-color: #aaaaaa;
+        background-color: #aaaaaa12;
     }}
 """
 
@@ -171,6 +171,22 @@ def markdown_to_html(md_text: str, css: str) -> str:
 </html>"""
 
 
+SCROLLBAR_CSS = f"""
+::-webkit-scrollbar {{
+    width: 8px;
+    height: 8px;
+}}
+::-webkit-scrollbar-track {{
+    background: {THEME["bg_two"]};
+    border-radius: 4px;
+}}
+::-webkit-scrollbar-thumb {{
+    background: {THEME["bg_four"]};
+    border-radius: 4px;
+}}
+"""
+
+
 class DocPage(QWebEnginePage):
     def acceptNavigationRequest(self, url, nav_type, is_main_frame):
         # Let the initial load through, intercept link clicks
@@ -187,6 +203,17 @@ class DocumentationWidget(QWebEngineView):
         self.setMinimumHeight(500)
         self.setPage(DocPage(self))
         self.load_markdown()
+        self.loadFinished.connect(self._inject_scrollbar_style)
+
+    def _inject_scrollbar_style(self, ok):
+        if not ok:
+            return
+        js = f"""
+            var style = document.createElement('style');
+            style.textContent = `{SCROLLBAR_CSS}`;
+            document.head.appendChild(style);
+        """
+        self.page().runJavaScript(js)
 
     def load_markdown(self):
         doc_file = self.criterion_widget.criterion._source_file.with_name("documentation.md")

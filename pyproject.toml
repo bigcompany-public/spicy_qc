@@ -9,7 +9,6 @@ authors = [
 requires-python = ">=3.9"
 dependencies = [
     "PySide6",
-    "QtPy",
     "QtAwesome",
     "Markdown"
 ]

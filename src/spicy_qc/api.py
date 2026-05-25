@@ -11,7 +11,7 @@ from enum import StrEnum, auto
 from pathlib import Path
 from typing import Any, Callable
 
-from qtpy.QtWidgets import QWidget
+from PySide6.QtWidgets import QWidget
 
 from spicy_qc.widgets.assistant_widget import AssistantWidget
 

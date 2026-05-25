@@ -4,10 +4,10 @@ import sys
 from pathlib import Path
 
 import qtawesome
-from qtpy import QtWidgets
-from qtpy.QtCore import Qt
-from qtpy.QtGui import QColor, QIcon
-from qtpy.QtWidgets import QApplication
+from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor, QIcon
+from PySide6.QtWidgets import QApplication
 
 
 def get_spicyqc_icon() -> QIcon:

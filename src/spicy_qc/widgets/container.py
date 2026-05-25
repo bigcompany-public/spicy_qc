@@ -24,9 +24,9 @@ from __future__ import annotations
 
 from typing import Any, Generic, TypeVar
 
-from qtpy.QtCore import Signal
-from qtpy.QtGui import QIcon
-from qtpy.QtWidgets import QDialog, QVBoxLayout, QWidget
+from PySide6.QtCore import Signal
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QWidget
 
 from spicy_qc.gui.utils import format_widgets, stylesheet
 

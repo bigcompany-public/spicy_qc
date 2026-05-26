@@ -69,6 +69,8 @@ def show_spicyqc_dialog(criterions: list[Criterion], tags: list[Tag]) -> None:
 
 
 def main():
+    # App needs to be intanciated here, because some widgets are creating within the configuration
+    app = get_qt_app()  # noqa: F841
     tags, criterions = get_config_from_path(Path(__file__).parent / "example_criterions")
     show_spicyqc_dialog(criterions, tags)
 

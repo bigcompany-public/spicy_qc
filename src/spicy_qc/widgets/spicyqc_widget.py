@@ -3,7 +3,6 @@ import random
 from PySide6.QtWidgets import (
     QFormLayout,
     QFrame,
-    QLabel,
     QLineEdit,
     QSizePolicy,
     QTableWidgetItem,
@@ -83,9 +82,6 @@ class SpicyQcWidget(QWidget):
     def setup_ui(self):
         self.setMinimumHeight(600)
         self._layout = QVBoxLayout(self)
-        label_title = QLabel("SpicyQC")
-        label_title.setProperty("tag", "H2")
-        # self._layout.addWidget(label_title)
 
         # Filtering Options
         self.filtering_frame = QFrame()
@@ -93,9 +89,6 @@ class SpicyQcWidget(QWidget):
         self.filtering_frame.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed))
         self._layout.addWidget(self.filtering_frame)
         filtering_layout = QVBoxLayout(self.filtering_frame)
-        label_filters = QLabel("Filters")
-        label_filters.setProperty("tag", "H4")
-        # filtering_layout.addWidget(label_filters)
 
         filter_form_frame = QFrame()
         filter_form_layout = QFormLayout(filter_form_frame)

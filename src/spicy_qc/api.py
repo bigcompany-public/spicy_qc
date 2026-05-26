@@ -13,8 +13,6 @@ from typing import Any, Callable
 
 from PySide6.QtWidgets import QWidget
 
-from spicy_qc.widgets.assistant_widget import AssistantWidget
-
 
 @dataclass
 class Tag:
@@ -48,7 +46,7 @@ class Criterion:
         self.verify_callback = verify_callback
         self.tags = tags or []
         self.is_optional = is_optional
-        self.assistant_widget = assistant_widget or AssistantWidget
+        self.assistant_widget = assistant_widget
 
         # Capture the file in which a Criterion instance was created
         caller_frame = inspect.stack()[1]

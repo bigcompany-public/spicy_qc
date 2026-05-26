@@ -178,18 +178,18 @@ class CriterionWidget(QFrame):
         assistant_frame_layout = QVBoxLayout(self.assistant_frame)  # noqa: F841
         assistant_frame_layout.setContentsMargins(5, 5, 5, 5)
         self.main_layout.addWidget(self.assistant_frame)
-        self.assistant_frame.setHidden(True)
-        self.assistant_frame.setFixedHeight(400)
         # assistant_frame_scroll_area = QScrollArea()
         # assistant_frame_layout.addWidget(assistant_frame_scroll_area)
         # assistant_frame_area_contents = QWidget()
         # assistant_frame_scroll_area.setWidget(assistant_frame_area_contents)
         # assistant_layout = QVBoxLayout(assistant_frame_area_contents)
+        self.assistant_frame.setHidden(True)
 
         # Insert assistant widget
         if self.criterion.assistant_widget:
             self.criterion.assistant_widget.setStyleSheet("background-color:red")
             assistant_frame_layout.addWidget(self.criterion.assistant_widget)
+            # assistant_frame_layout.addStretch()
         else:
             print("NO ASSISTANT")
 
@@ -285,7 +285,7 @@ class CriterionWidget(QFrame):
 
     def update_row_height(self):
         top_height = 80
-        assistant_height = self.assistant_frame.sizeHint().height() + self.main_layout.spacing()
+        assistant_height = self.assistant_frame.height() + self.main_layout.spacing()
         assistant_multiplier = int(self.assistant_frame.isVisible())
         log_height = self.log_frame.sizeHint().height() + self.main_layout.spacing()
         log_multiplier = int(self.log_frame.isVisible())

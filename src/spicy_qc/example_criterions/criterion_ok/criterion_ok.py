@@ -8,6 +8,9 @@ def function_ok(criterion: Criterion):
 
 
 assistant = QLabel("Hello")
+assistant.setFixedHeight(100)
+assistant.setFixedWidth(100)
+# assistant.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum))
 
 criterion_ok = Criterion(
     label="Criterion working fine",

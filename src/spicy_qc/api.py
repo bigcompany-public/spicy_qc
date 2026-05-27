@@ -62,7 +62,7 @@ class Criterion:
         self.warnings: list[Warning] = []
 
     def get_documentation(self) -> str:
-        path = self._source_file.with_name("documentation.md")
+        path = self._source_file.with_suffix(".md")
         if not path.exists():
             return ""
         return path.read_text()

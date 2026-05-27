@@ -54,7 +54,7 @@ def get_criterions_from_path(path: Path) -> list[Criterion]:
         spec.loader.exec_module(module)  # type: ignore
 
         # Get Criterion instance from module
-        criterion = getattr(module, criterion_name)
+        criterion = getattr(module, "criterion")
         criterions.append(criterion)
 
     return criterions

@@ -106,7 +106,7 @@ class CriterionWidget(QFrame):
     def setup_ui(self):
         # Add a container with a few pixels of margin to make the selection more visually clear
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(2, 0, 0, 0)
+        layout.setContentsMargins(3, 0, 0, 0)
 
         # Layout with the "main frame" and the frame that appears when expanded
         container_frame = QFrame()
@@ -145,7 +145,6 @@ class CriterionWidget(QFrame):
         subframe_right_layout = QHBoxLayout(subframe_right)
         subframe_right_layout.setContentsMargins(0, 0, 0, 0)
         frame_right_layout.addWidget(subframe_right)
-        # frame_right_layout.addStretch()
 
         # Name & description
         label = QLabel(self.criterion.label)
@@ -176,7 +175,7 @@ class CriterionWidget(QFrame):
         # HIDDEN Assistant Frame
         self.assistant_frame = QFrame()
         self.assistant_frame.setFixedHeight(FRAME_HEIGHT)
-        self.assistant_frame_layout = QVBoxLayout(self.assistant_frame)  # noqa: F841
+        self.assistant_frame_layout = QVBoxLayout(self.assistant_frame)
         self.assistant_frame_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.addWidget(self.assistant_frame)
         self.assistant_frame.setHidden(True)
@@ -184,7 +183,7 @@ class CriterionWidget(QFrame):
         # HIDDEN Log Frame
         self.log_frame = QFrame()
         self.log_frame.setFixedHeight(FRAME_HEIGHT)
-        log_frame_layout = QVBoxLayout(self.log_frame)  # noqa: F841
+        log_frame_layout = QVBoxLayout(self.log_frame)
         log_frame_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.addWidget(self.log_frame)
         self.log_frame.setHidden(True)
@@ -199,7 +198,7 @@ class CriterionWidget(QFrame):
         self.documentation_frame = QFrame()
         self.documentation_frame.setFixedHeight(FRAME_HEIGHT)
         self.documentation_frame.setStyleSheet(f"border: 1px solid {THEME['outline']}")
-        documentation_frame_layout = QVBoxLayout(self.documentation_frame)  # noqa: F841
+        documentation_frame_layout = QVBoxLayout(self.documentation_frame)
         documentation_frame_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.addWidget(self.documentation_frame)
         self.documentation_frame.setHidden(True)
@@ -234,9 +233,7 @@ class CriterionWidget(QFrame):
         format_widgets(self)
 
     def update_assistant_widget(self):
-        print(self.criterion.assistant_widget)
         if not self.criterion.assistant_widget:
-            print("No Assistant")
             return
 
         if self.assistant_frame_scroll_area:
@@ -253,6 +250,10 @@ class CriterionWidget(QFrame):
         # Add Assistant Widget
         widget = self.criterion.assistant_widget(criterion=self.criterion)
         self.assistant_layout.addWidget(widget)
+
+        # Inject self into Assistant Widget to allow upstream operations
+        widget.criterion_widget = self
+        widget.spicy_qc_widget = self.spicy_qc_widget
 
         # Properly layout contents
         self.assistant_layout.addStretch()

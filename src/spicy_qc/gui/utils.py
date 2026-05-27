@@ -291,7 +291,7 @@ def get_stylesheet(theme: str = "dark"):
     QFrame[depth="4"] {{
         background-color: rgba({QColor(colors["bg_one"]).red()},{QColor(colors["bg_one"]).green()}, {QColor(colors["bg_one"]).blue()},85%);
         border-radius:2px;
-        border:1px solid {colors["bg_three"]};
+        border:1px solid {colors["outline2"]};
     }}
 
     QComboBox {{

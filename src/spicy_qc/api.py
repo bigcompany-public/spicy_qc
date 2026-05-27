@@ -9,9 +9,10 @@ from contextlib import redirect_stdout
 from dataclasses import dataclass
 from enum import StrEnum, auto
 from pathlib import Path
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable, Type
 
-from PySide6.QtWidgets import QWidget
+if TYPE_CHECKING:
+    from spicy_qc.widgets.assistant_widget import AssistantWidget
 
 
 @dataclass
@@ -38,7 +39,7 @@ class Criterion:
         verify_callback: Callable,
         tags: list[str] | None = None,
         is_optional: bool = False,
-        assistant_widget: QWidget | None = None,
+        assistant_widget: Type[AssistantWidget] | None = None,
         documentation: str = "",
     ) -> None:
         self.label = label

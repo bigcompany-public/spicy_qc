@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 import qtawesome
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
@@ -94,6 +95,7 @@ class CriterionWidget(QFrame):
         self.table_widget = self.spicy_qc_widget.table_widget
         self.criterion = criterion
         self.table_item: CriterionTableItem | None = None
+        self.assistant_frame_scroll_area: QScrollArea | None = None
         self.icon_toggle_collapsed = qtawesome.icon("fa6s.caret-right", scale_factor=1.2, color=THEME["icon_color"])
         self.icon_toggle_expanded = qtawesome.icon("fa6s.caret-down", scale_factor=1.2, color=THEME["icon_color"])
         self.collapsed_height: int = 10
@@ -172,28 +174,12 @@ class CriterionWidget(QFrame):
 
         # HIDDEN Assistant Frame
         self.assistant_frame = QFrame()
-        self.assistant_frame.setFixedHeight(170)
-        self.assistant_frame.setProperty("depth", "4")
+        self.assistant_frame.setMaximumHeight(500)
         self.assistant_frame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        assistant_frame_layout = QVBoxLayout(self.assistant_frame)  # noqa: F841
-        assistant_frame_layout.setContentsMargins(5, 5, 5, 5)
+        self.assistant_frame_layout = QVBoxLayout(self.assistant_frame)  # noqa: F841
+        self.assistant_frame_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.addWidget(self.assistant_frame)
-        # assistant_frame_scroll_area = QScrollArea()
-        # assistant_frame_layout.addWidget(assistant_frame_scroll_area)
-        # assistant_frame_area_contents = QWidget()
-        # assistant_frame_scroll_area.setWidget(assistant_frame_area_contents)
-        # assistant_layout = QVBoxLayout(assistant_frame_area_contents)
         self.assistant_frame.setHidden(True)
-
-        # Insert assistant widget
-        if self.criterion.assistant_widget:
-            self.criterion.assistant_widget.setStyleSheet("background-color:red")
-            assistant_frame_layout.addWidget(self.criterion.assistant_widget)
-            # assistant_frame_layout.addStretch()
-        else:
-            print("NO ASSISTANT")
-
-        # self.assistant_widget = AssistantWidget(criterion_widget=self,)
 
         # HIDDEN Log Frame
         self.log_frame = QFrame()
@@ -228,13 +214,11 @@ class CriterionWidget(QFrame):
         self.toggle_assistant_button = ToggleAreaButton("assistant", self, self.assistant_frame)
         toggle_areas_layout.addWidget(self.toggle_assistant_button)
         if not self.criterion.assistant_widget:
-            self.toggle_assistant_button.setDisabled(True)
+            self.toggle_assistant_button.setHidden(True)
 
         # Toggle Logs Button
         self.toggle_logs_button = ToggleAreaButton("logs", self, self.log_frame)
         toggle_areas_layout.addWidget(self.toggle_logs_button)
-        if not self.criterion.logs:
-            self.toggle_logs_button.setDisabled(True)
 
         # Toggle Documentation Button
         self.toggle_documentation_button = ToggleAreaButton("documentation", self, self.documentation_frame)
@@ -245,13 +229,45 @@ class CriterionWidget(QFrame):
         # Stretch
         toggle_areas_layout.addStretch()
 
+        # Add assistant
+        self.update_assistant_widget()
+
         # Format widgets
         format_widgets(self)
+
+    def update_assistant_widget(self):
+        print(self.criterion.assistant_widget)
+        if not self.criterion.assistant_widget:
+            print("No Assistant")
+            return
+
+        if self.assistant_frame_scroll_area:
+            self.assistant_frame_scroll_area.deleteLater()
+
+        self.assistant_frame_scroll_area = QScrollArea()
+        self.assistant_frame_scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.assistant_frame_scroll_area.setWidgetResizable(True)
+        self.assistant_frame_layout.addWidget(self.assistant_frame_scroll_area)
+        self.assistant_frame_area_contents = QWidget()
+        self.assistant_layout = QVBoxLayout(self.assistant_frame_area_contents)
+        self.assistant_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Add Assistant Widget
+        widget = self.criterion.assistant_widget(criterion=self.criterion)
+        self.assistant_layout.addWidget(widget)
+
+        # Properly layout contents
+        self.assistant_layout.addStretch()
+        self.assistant_frame_scroll_area.setWidget(self.assistant_frame_area_contents)
+
+        # Recompute row height
+        self.update_row_height()
 
     def verify(self):
         self.criterion.verify()
         self.update_status_label()
         self.update_stdout_line_edit()
+        self.update_assistant_widget()
 
     def setup_signals(self):
         self.verify_button.clicked.connect(self.verify_button_clicked)
@@ -285,7 +301,7 @@ class CriterionWidget(QFrame):
 
     def update_row_height(self):
         top_height = 80
-        assistant_height = self.assistant_frame.height() + self.main_layout.spacing()
+        assistant_height = self.assistant_frame.sizeHint().height() + self.main_layout.spacing()
         assistant_multiplier = int(self.assistant_frame.isVisible())
         log_height = self.log_frame.sizeHint().height() + self.main_layout.spacing()
         log_multiplier = int(self.log_frame.isVisible())
@@ -324,31 +340,3 @@ class CriterionWidget(QFrame):
         if not self.table_item:
             return -1
         return self.table_item.row()
-
-
-class AssistantWidget(QWidget):
-    def __init__(
-        self,
-        criterion_widget: CriterionWidget,
-        element_selection_callback: Callable,
-        element_hightlight_callback: Callable,
-    ):
-        super().__init__()
-        self.setMaximumHeight(500)
-        self.criterion_widget = criterion_widget
-        self.criterion = self.criterion_widget.criterion
-        self.element_selection_callback = element_selection_callback
-        self.element_hightlight_callback = element_hightlight_callback
-
-    def setup_ui(self):
-        layout = self.layout()
-        if layout:
-            layout.deleteLater()
-
-        main_layout = QVBoxLayout(self)
-
-        if self.criterion.status == CriterionStatus.WAITING:
-            self.setup_ui_waiting()
-
-    def setup_ui_waiting(self):
-        pass

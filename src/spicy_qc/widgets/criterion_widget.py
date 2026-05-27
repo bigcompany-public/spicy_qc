@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QPlainTextEdit,
     QPushButton,
-    QScrollArea,  # noqa: F401
+    QScrollArea,
     QSizePolicy,
     QTableWidgetItem,
     QVBoxLayout,
@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from spicy_qc.widgets.spicyqc_widget import SpicyQcWidget
 
 THEME = get_theme()
+FRAME_HEIGHT = 300
 
 
 class ToggleAreaButton(QPushButton):
@@ -119,7 +120,7 @@ class CriterionWidget(QFrame):
         main_frame = QFrame()
         container_layout.addWidget(main_frame)
         self.main_layout = QVBoxLayout(main_frame)
-        self.main_layout.setContentsMargins(6, 2, 2, 2)
+        self.main_layout.setContentsMargins(6, 6, 6, 6)
         self.main_layout.setSpacing(3)
 
         # sub-frames
@@ -174,8 +175,7 @@ class CriterionWidget(QFrame):
 
         # HIDDEN Assistant Frame
         self.assistant_frame = QFrame()
-        self.assistant_frame.setMaximumHeight(500)
-        self.assistant_frame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.assistant_frame.setFixedHeight(FRAME_HEIGHT)
         self.assistant_frame_layout = QVBoxLayout(self.assistant_frame)  # noqa: F841
         self.assistant_frame_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.addWidget(self.assistant_frame)
@@ -183,26 +183,24 @@ class CriterionWidget(QFrame):
 
         # HIDDEN Log Frame
         self.log_frame = QFrame()
-        self.log_frame.setProperty("depth", "4")
-        self.log_frame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.log_frame.setFixedHeight(FRAME_HEIGHT)
         log_frame_layout = QVBoxLayout(self.log_frame)  # noqa: F841
-        log_frame_layout.setContentsMargins(5, 5, 5, 5)
+        log_frame_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.addWidget(self.log_frame)
         self.log_frame.setHidden(True)
 
         self.stdout_view = QPlainTextEdit()
         self.stdout_view.setProperty("status", "code")
         self.stdout_view.setReadOnly(True)
-        self.stdout_view.setFixedHeight(200)
         log_frame_layout.addWidget(self.stdout_view)
         self.stdout_view.setPlainText("Verification was not done yet")
 
         # HIDDEN documentation Frame
         self.documentation_frame = QFrame()
-        self.documentation_frame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        self.documentation_frame.setProperty("depth", "4")
+        self.documentation_frame.setFixedHeight(FRAME_HEIGHT)
+        self.documentation_frame.setStyleSheet(f"border: 1px solid {THEME['outline']}")
         documentation_frame_layout = QVBoxLayout(self.documentation_frame)  # noqa: F841
-        documentation_frame_layout.setContentsMargins(5, 5, 5, 5)
+        documentation_frame_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.addWidget(self.documentation_frame)
         self.documentation_frame.setHidden(True)
 
@@ -301,11 +299,11 @@ class CriterionWidget(QFrame):
 
     def update_row_height(self):
         top_height = 80
-        assistant_height = self.assistant_frame.sizeHint().height() + self.main_layout.spacing()
+        assistant_height = self.assistant_frame.height() + self.main_layout.spacing()
         assistant_multiplier = int(self.assistant_frame.isVisible())
-        log_height = self.log_frame.sizeHint().height() + self.main_layout.spacing()
+        log_height = self.log_frame.height() + self.main_layout.spacing()
         log_multiplier = int(self.log_frame.isVisible())
-        documentation_height = self.documentation_frame.sizeHint().height() + self.main_layout.spacing()
+        documentation_height = self.documentation_frame.height() + self.main_layout.spacing()
         documentation_multiplier = int(self.documentation_frame.isVisible())
 
         total_height = (

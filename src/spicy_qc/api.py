@@ -65,7 +65,7 @@ class Criterion:
         path = self._source_file.with_suffix(".md")
         if not path.exists():
             return ""
-        return path.read_text()
+        return path.read_text(encoding="utf-8")
 
     def add_warning(self, warning: Warning):
         print(warning.message)

@@ -2,21 +2,48 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
-    QAbstractItemView,
-    QSizePolicy,
-    QTableWidget,
-)
+import qtawesome
+from PySide6.QtCore import QEvent, Qt
+from PySide6.QtWidgets import QAbstractItemView, QMenu, QSizePolicy, QTableWidget
+
+from spicy_qc.gui.utils import get_theme
 
 if TYPE_CHECKING:
     from spicy_qc.widgets.criterion_widget import CriterionTableItem, CriterionWidget
     from spicy_qc.widgets.spicyqc_widget import SpicyQcWidget
 
+THEME = get_theme()
+
+
+class TableMenu(QMenu):
+    def __init__(self, table_widget: CriterionTableWidget):
+        super().__init__(table_widget)
+        self.table_widget = table_widget
+        self.spicy_qc_widget = table_widget.spicy_qc_widget
+
+        if self.table_widget.show_valid_criterions:
+            action = self.addAction("Hide Valid Criterions")
+            action.setIcon(qtawesome.icon("fa6s.toggle-off", color=THEME["icon_color"]))
+            action.triggered.connect(self.hide_valid_criterions)
+        else:
+            action = self.addAction("Show Valid Criterions")
+            action.setIcon(qtawesome.icon("fa6s.toggle-on", color=THEME["icon_color"]))
+            action.triggered.connect(self.show_valid_criterions)
+
+    def hide_valid_criterions(self):
+        self.table_widget.show_valid_criterions = False
+        self.spicy_qc_widget.update_visible_columns()
+
+    def show_valid_criterions(self):
+        self.table_widget.show_valid_criterions = True
+        self.spicy_qc_widget.update_visible_columns()
+
 
 class CriterionTableWidget(QTableWidget):
     def __init__(self, spicy_qc_widget: SpicyQcWidget) -> None:
         super().__init__(spicy_qc_widget)
+        self.spicy_qc_widget = spicy_qc_widget
+        self.show_valid_criterions = True
         self._columns = ["label", "criterion"]
         self._label_column_index = self._columns.index("label")
         self._criterion_column_index = self._columns.index("criterion")
@@ -46,3 +73,10 @@ class CriterionTableWidget(QTableWidget):
 
     def selectedItems(self) -> List[CriterionTableItem]:
         return super().selectedItems()  # type: ignore
+
+    def contextMenuEvent(self, event: QEvent):
+        """
+        This method pops a Qmenu widget when the user right clicks on the table
+        """
+        menu = TableMenu(self)
+        menu.exec_(event.globalPos())

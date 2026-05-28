@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from spicy_qc.api import Criterion, Tag
+from spicy_qc.api import Criterion, CriterionStatus, Tag
 from spicy_qc.widgets.criterion_widget import CriterionTableItem, CriterionWidget
 from spicy_qc.widgets.table_widget import CriterionTableWidget
 from spicy_qc.widgets.tag_filter_widget import TagFilterWidget
@@ -139,7 +139,11 @@ class SpicyQcWidget(QWidget):
             self.add_criterion_widget(criterion)
 
     def should_be_visible(self, criterion_widget: CriterionWidget) -> bool:
-        return self.matches_tag_selection(criterion_widget) and self.matches_search(criterion_widget)
+        return (
+            self.matches_tag_selection(criterion_widget)
+            and self.matches_search(criterion_widget)
+            and self.should_be_hidden_if_valid(criterion_widget)
+        )
 
     def matches_tag_selection(self, criterion_widget: CriterionWidget) -> bool:
         return any([tag in self.selected_tag_names for tag in criterion_widget.criterion.tags])
@@ -149,6 +153,14 @@ class SpicyQcWidget(QWidget):
         if not search_string:
             return True
         return search_string in criterion_widget.criterion.label.lower()
+
+    def should_be_hidden_if_valid(self, criterion_widget: CriterionWidget) -> bool:
+        if self.table_widget.show_valid_criterions:
+            return True
+        if criterion_widget.criterion.status == CriterionStatus.OK:
+            return False
+        else:
+            return True
 
     def get_criterion_widgets_to_show(self) -> list[CriterionWidget]:
         filtered_widgets: list[CriterionWidget] = []

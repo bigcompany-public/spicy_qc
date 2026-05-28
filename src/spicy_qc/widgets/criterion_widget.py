@@ -266,6 +266,7 @@ class CriterionWidget(QFrame):
         self.update_status_label()
         self.update_stdout_line_edit()
         self.update_assistant_widget()
+        self.spicy_qc_widget.update_visible_columns()
 
     def setup_signals(self):
         self.verify_button.clicked.connect(self.verify_button_clicked)

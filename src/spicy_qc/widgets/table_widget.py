@@ -21,6 +21,7 @@ class TableMenu(QMenu):
         self.table_widget = table_widget
         self.spicy_qc_widget = table_widget.spicy_qc_widget
 
+        # Show Valid
         if self.table_widget.show_valid_criterions:
             action = self.addAction("Hide Valid Criterions")
             action.setIcon(qtawesome.icon("fa6s.toggle-off", color=THEME["icon_color"]))
@@ -30,6 +31,11 @@ class TableMenu(QMenu):
             action.setIcon(qtawesome.icon("fa6s.toggle-on", color=THEME["icon_color"]))
             action.triggered.connect(self.show_valid_criterions)
 
+        # Collapse all
+        action = self.addAction("Collapse All")
+        action.setIcon(qtawesome.icon("mdi.arrow-collapse-vertical", color=THEME["icon_color"]))
+        action.triggered.connect(self.collapse_all)
+
     def hide_valid_criterions(self):
         self.table_widget.show_valid_criterions = False
         self.spicy_qc_widget.update_visible_columns()
@@ -37,6 +43,12 @@ class TableMenu(QMenu):
     def show_valid_criterions(self):
         self.table_widget.show_valid_criterions = True
         self.spicy_qc_widget.update_visible_columns()
+
+    def collapse_all(self):
+        for criterion_widget in self.spicy_qc_widget.criterion_widgets:
+            criterion_widget.toggle_logs_button.collapse_frame()
+            criterion_widget.toggle_assistant_button.collapse_frame()
+            criterion_widget.toggle_documentation_button.collapse_frame()
 
 
 class CriterionTableWidget(QTableWidget):

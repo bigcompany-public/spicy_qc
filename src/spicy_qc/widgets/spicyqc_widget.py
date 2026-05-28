@@ -188,6 +188,7 @@ class SpicyQcWidget(QWidget):
 
     def add_criterion_widget(self, criterion: Criterion):
         criterion_widget = CriterionWidget(criterion=criterion, spicy_qc_widget=self)
+        self.criterion_widgets.append(criterion_widget)
         row_number = self.table_widget.rowCount()
         self.table_widget.insertRow(row_number)
 

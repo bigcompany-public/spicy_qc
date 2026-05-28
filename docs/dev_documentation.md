@@ -71,3 +71,44 @@ The `criterion` argument of the `verify_stuff` function now comes into play. We 
 
 Let's now provide the user an Assistant widget to help him resolve the issues revealed by the verification process.
 
+=== "python"
+    ```python
+    # Import additional objects and function to create the UI
+    from spicy_qc import AssistantWidget, Criterion, CriterionStatus, Warning, show_spicyqc_dialog
+    from PySide6.QtWidgets import QLabel, QPushButton, QSizePolicy, QVBoxLayout
+    from functools import partial
+
+    def verify_stuff(criterion: Criterion):
+        ...
+
+    # Create a PySide6 widget where you basically do anything you want
+    class CustomAssistant(AssistantWidget):
+        def __init__(self, criterion: Criterion):
+            super().__init__(criterion)
+            layout = QVBoxLayout(self)
+            self.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
+
+            if self.criterion.status == CriterionStatus.WAITING:
+                layout.addWidget(QLabel("The verification has not been done yet"))
+                return
+
+            for warning in self.criterion.warnings:
+                if warning.element:
+                    button = QPushButton(f"Fix {warning.element}")
+                    layout.addWidget(button)
+                    button.clicked.connect(partial(self.fix_element, warning.element))
+
+        def fix_element(self, element):
+            print(f"Fixing {element}")
+
+
+    # Pass the newly created class to the Criterion, so it is added to the GUI
+    criterion = Criterion(
+        label="Simple Criterion",
+        description="Criterion for demonstration purposes",
+        verify_callback=verify_stuff,
+        assistant_widget=CustomAssistant,
+    )
+
+    show_spicyqc_dialog(criterions=[criterion])
+    ```

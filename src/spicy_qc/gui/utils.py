@@ -709,10 +709,11 @@ def get_stylesheet(theme: str = "dark"):
         );
         margin-bottom: 2px;
         border-top:1px solid {colors["outline2"]};
+        border-radius:4px;
     }}
     QTableView::item::selected {{
-        background-color: rgba({QColor(colors["active"]).red()},{QColor(colors["active"]).green()}, {QColor(colors["active"]).blue()},10%);
-        border-top:1px solid {colors["outline2"]};
+        background-color: #273147;
+        border-top:1px solid {colors["outline"]};
     }}
 
     QTreeView {{
@@ -811,6 +812,10 @@ def get_stylesheet(theme: str = "dark"):
     QListWidget::item {{
         border-radius: 0px;
         background-color: none;
+    }}
+    QListWidget::item::hover {{
+        background-color: {colors["text_color"]};
+        border-radius: 10px;
     }}
 
     .QWidget {{

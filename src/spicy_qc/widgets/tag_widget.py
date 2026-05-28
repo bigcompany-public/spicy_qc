@@ -49,7 +49,7 @@ class TagWidget(QFrame):
         if self.tag.tag_icon:
             try:
                 icon = qtawesome.icon(self.tag.tag_icon, color=tag_icon_color)
-                self.icon_label.setPixmap(icon.pixmap(int(self._size * 0.75), int(self._size * 0.75)))
+                self.icon_label.setPixmap(icon.pixmap(int(self._size * 0.9), int(self._size * 0.9)))
                 self.icon_label.setHidden(False)
             except Exception:
                 self.icon_label.setHidden(True)

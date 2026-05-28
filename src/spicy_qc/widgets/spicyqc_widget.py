@@ -13,29 +13,54 @@ from PySide6.QtWidgets import (
 from spicy_qc.api import Criterion, CriterionStatus, Tag
 from spicy_qc.widgets.criterion_widget import CriterionTableItem, CriterionWidget
 from spicy_qc.widgets.table_widget import CriterionTableWidget
-from spicy_qc.widgets.tag_filter_widget import TagFilterWidget
+from spicy_qc.widgets.tag_filter_widget import TagFilterWidget, TagListWidget
 
 
 class SpicyQcWidget(QWidget):
-    def __init__(self, criterions: list[Criterion], tags: list[Tag], is_preset: bool = False):
+    def __init__(
+        self,
+        criterions: list[Criterion],
+        tags: list[Tag],
+        tag_selection: list[str] | None = None,
+        tag_whitelist: list[str] | None = None,
+        tag_blacklist: list[str] | None = None,
+        lock: bool = False,
+    ):
         super().__init__()
         self.criterions = criterions
         self.tags = tags
+        self.tag_selection = tag_selection
+        self.tag_whitelist = tag_whitelist
+        self.tag_blacklist = tag_blacklist
+        self.lock = lock
         self.ensure_unique_tags()
         self.create_missing_tags()
         self.filter_tags()
-        self.is_preset = is_preset
         self.criterion_widgets: list[CriterionWidget] = []
         self.setup_ui()
         self.setup_initial_state()
         self.setup_signals()
 
     def setup_initial_state(self):
-        self.select_all_tags()
         self.create_criterion_widgets()
+        self.select_tags()
+        if self.lock:
+            self.filtering_frame.setHidden(True)
+        self.update_visible_columns()
 
-    def select_all_tags(self):
-        self.tag_filter_widget.list_widget.selectAll()
+    def select_tags(self):
+        # If no selection is provided, select all
+        tag_list_widget = self.tag_filter_widget.list_widget
+        if not self.tag_selection:
+            tag_list_widget.selectAll()
+            return
+
+        # Else, select provided tags
+        for i in range(tag_list_widget.count()):
+            item = tag_list_widget.item(i)
+            widget: TagListWidget = tag_list_widget.itemWidget(item)  # type: ignore
+            if widget.tag.tag in self.tag_selection:
+                item.setSelected(True)
 
     def ensure_unique_tags(self):
         """Raises an error if a tag name is used multiple time"""
@@ -69,6 +94,8 @@ class SpicyQcWidget(QWidget):
         """Filters out tags that are used in no Criterion"""
         available_tag_names = [tag.tag for tag in self.tags]
         filtered_tag_names: set[str] = set()
+
+        # Filter tags that are used in no criterion
         for criterion in self.criterions:
             for tag_name in criterion.tags:
                 if tag_name not in available_tag_names:
@@ -77,11 +104,20 @@ class SpicyQcWidget(QWidget):
                     )
                 filtered_tag_names.add(tag_name)
 
+        # Filter by whitelist
+        if self.tag_whitelist:
+            filtered_tag_names = {tag for tag in filtered_tag_names if tag in self.tag_whitelist}
+
+        # Filter by blacklist
+        if self.tag_blacklist:
+            filtered_tag_names = {tag for tag in filtered_tag_names if tag not in self.tag_blacklist}
+
         self.tags = [tag for tag in self.tags if tag.tag in filtered_tag_names]
 
     def setup_ui(self):
         self.setMinimumHeight(600)
         self._layout = QVBoxLayout(self)
+        self._layout.setContentsMargins(3, 3, 3, 3)
 
         # Filtering Options
         self.filtering_frame = QFrame()
@@ -90,15 +126,15 @@ class SpicyQcWidget(QWidget):
         self._layout.addWidget(self.filtering_frame)
         filtering_layout = QVBoxLayout(self.filtering_frame)
 
-        filter_form_frame = QFrame()
-        filter_form_layout = QFormLayout(filter_form_frame)
+        self.filter_form_frame = QFrame()
+        filter_form_layout = QFormLayout(self.filter_form_frame)
         filter_form_layout.setContentsMargins(0, 0, 0, 0)
-        filtering_layout.addWidget(filter_form_frame)
+        filtering_layout.addWidget(self.filter_form_frame)
 
         ## Search Bar
         self.line_edit_search = QLineEdit()
         self.line_edit_search.setMaximumWidth(180)
-        filter_form_layout.addRow("QuickSearch", self.line_edit_search)
+        filter_form_layout.addRow("Search", self.line_edit_search)
 
         ## Tags
         self.tag_filter_widget = TagFilterWidget(tags=self.tags, spicyqc_widget=self)
@@ -152,7 +188,10 @@ class SpicyQcWidget(QWidget):
         search_string = self.line_edit_search.text().lower().strip()
         if not search_string:
             return True
-        return search_string in criterion_widget.criterion.label.lower()
+        return (
+            search_string in criterion_widget.criterion.label.lower()
+            or search_string in criterion_widget.criterion.description.lower()
+        )
 
     def should_be_hidden_if_valid(self, criterion_widget: CriterionWidget) -> bool:
         if self.table_widget.show_valid_criterions:

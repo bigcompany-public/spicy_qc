@@ -60,9 +60,23 @@ def get_criterions_from_path(path: Path) -> list[Criterion]:
     return criterions
 
 
-def show_spicyqc_dialog(criterions: list[Criterion], tags: list[Tag]) -> None:
+def show_spicyqc_dialog(
+    criterions: list[Criterion],
+    tags: list[Tag],
+    tag_selection: list[str] | None = None,
+    tag_whitelist: list[str] | None = None,
+    tag_blacklist: list[str] | None = None,
+    lock: bool = False,
+) -> None:
     app = get_qt_app()  # noqa: F841
-    widget = SpicyQcWidget(criterions, tags)
+    widget = SpicyQcWidget(
+        criterions=criterions,
+        tags=tags,
+        tag_selection=tag_selection,
+        tag_whitelist=tag_whitelist,
+        tag_blacklist=tag_blacklist,
+        lock=lock,
+    )
     container = ContainerWidget(widget, title="SpicyQC", icon=get_spicyqc_icon())
     dialog = ContainerDialog(container)
     dialog.exec()
@@ -72,7 +86,14 @@ def main():
     # App needs to be intanciated here, because some widgets are creating within the configuration
     app = get_qt_app()  # noqa: F841
     tags, criterions = get_config_from_path(Path(__file__).parent / "example_criterions")
-    show_spicyqc_dialog(criterions, tags)
+    show_spicyqc_dialog(
+        criterions,
+        tags,
+        tag_selection=["scene", "mesh"],
+        tag_whitelist=[],
+        tag_blacklist=[],
+        lock=False,
+    )
 
 
 if __name__ == "__main__":

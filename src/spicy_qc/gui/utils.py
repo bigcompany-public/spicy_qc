@@ -288,11 +288,6 @@ def get_stylesheet(theme: str = "dark"):
         border-radius:5px;
         border:1px solid {colors["outline"]};
     }}
-    QFrame[depth="4"] {{
-        background-color: rgba({QColor(colors["bg_one"]).red()},{QColor(colors["bg_one"]).green()}, {QColor(colors["bg_one"]).blue()},85%);
-        border-radius:2px;
-        border:1px solid {colors["outline2"]};
-    }}
 
     QComboBox {{
         border: 1px solid;
@@ -707,11 +702,17 @@ def get_stylesheet(theme: str = "dark"):
         outline: 0;
     }}
     QTableView::item {{
-        background-color: none;
+        background-color: qlineargradient(
+            x1: 1, y1: 0, x2: 0.6, y2: 1,
+            stop: 0 rgba({QColor(colors["bg_four"]).red()},{QColor(colors["bg_four"]).green()}, {QColor(colors["bg_four"]).blue()},30%),
+            stop: 1 rgba({QColor(colors["bg_four"]).red()},{QColor(colors["bg_four"]).green()}, {QColor(colors["bg_four"]).blue()},3%)
+        );
+        margin-bottom: 2px;
+        border-top:1px solid {colors["outline2"]};
     }}
     QTableView::item::selected {{
-        background-color: {colors["active"]};
-        color: {colors["bg_one"]};
+        background-color: rgba({QColor(colors["active"]).red()},{QColor(colors["active"]).green()}, {QColor(colors["active"]).blue()},10%);
+        border-top:1px solid {colors["outline2"]};
     }}
 
     QTreeView {{
@@ -800,22 +801,16 @@ def get_stylesheet(theme: str = "dark"):
 
     QListWidget {{
         border: 1px solid;
-        border-color: {colors["bg_four"]};
-        border-radius: 3px;
-        background-color: {colors["bg_two"]};
+        border-color: transparent;
+        border-radius: 0px;
+        background-color: transparent;
         padding: 2px;
         color: {colors["text_color"]};
         outline: none;
     }}
     QListWidget::item {{
-        border-radius: 3px;
+        border-radius: 0px;
         background-color: none;
-    }}
-    QListWidget::item::hover {{
-        background-color: {colors["button_hover"]};
-    }}
-    QListWidget::item::selected {{
-        background-color: {colors["button_hover"]};
     }}
 
     .QWidget {{

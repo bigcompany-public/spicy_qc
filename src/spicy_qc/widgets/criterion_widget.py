@@ -110,7 +110,6 @@ class CriterionWidget(QFrame):
 
         # Layout with the "main frame" and the frame that appears when expanded
         container_frame = QFrame()
-        container_frame.setProperty("depth", "4")
         layout.addWidget(container_frame)
         container_layout = QVBoxLayout(container_frame)
         container_layout.setContentsMargins(0, 0, 0, 0)

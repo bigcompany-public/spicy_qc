@@ -102,7 +102,12 @@ class SpicyQcWidget(QWidget):
 
         ## Tags
         self.tag_filter_widget = TagFilterWidget(tags=self.tags, spicyqc_widget=self)
-        height = 70 if len(self.tags) > 4 else 35
+        if len(self.tags) < 5:
+            height = 35
+        elif len(self.tags) < 10:
+            height = 65
+        else:
+            height = 85
         self.tag_filter_widget.setFixedHeight(height)
         filter_form_layout.addRow("Tags", self.tag_filter_widget)
 

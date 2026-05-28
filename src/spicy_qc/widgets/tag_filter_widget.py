@@ -34,7 +34,6 @@ class TagListWidget(QFrame):
         margin_layout.setContentsMargins(0, 0, 0, 0)
 
         inner_frame = QFrame()
-        inner_frame.setProperty("depth", "1")
         inner_frame.setContentsMargins(0, 0, 0, 0)
         inner_frame.setStyleSheet("")
         margin_layout.addWidget(inner_frame)

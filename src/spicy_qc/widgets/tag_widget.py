@@ -11,7 +11,7 @@ from spicy_qc.api import Tag
 
 
 class TagWidget(QFrame):
-    def __init__(self, tag: Tag, size: int = 24):
+    def __init__(self, tag: Tag, size: int = 22):
         super().__init__()
         self.tag = tag
         self._size = size

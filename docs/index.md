@@ -6,6 +6,8 @@ SpicyQC is a quality control system with clear visual feedback, designed to help
 
 It is based on PySide6, making it easy to implement in most of the DCCs used in the Animation/VFX industry.
 
+![spicyqc](img/spicyqc.png)
+
 ## What makes SpicyQC so spicy?
 
 Here are the key design choices that make SpicyQC different from other solutions:
@@ -22,4 +24,4 @@ Here are the key design choices that make SpicyQC different from other solutions
 ---
 
 !!! info ""
-    <a href="Next Section"> <div style="text-align: right; font-weight: bold"> [Next Section : Quick Start](./quick_start.md) </div>
+    <a href="Next Section"> <div style="text-align: right; font-weight: bold"> [Next Section : Quick Start](./quickstart.md) </div>

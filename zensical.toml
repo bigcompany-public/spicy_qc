@@ -19,6 +19,9 @@ edit_uri = "edit/main/docs/"
 extra_css = ["stylesheets/extra.css"]
 nav = [
     { "Home" = "index.md" },
+    { "QuickStart" = "quickstart.md" },
+    { "User Documentation" = "user_documentation.md" },
+    { "TD/Dev Documentation" = "dev_documentation.md" },
 ]
 
 # Palette toggle for dark mode

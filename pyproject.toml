@@ -21,7 +21,7 @@ docs = [
 ]
 
 [project.scripts]
-spicy-qc = "spicy_qc.main:main"
+spicy-qc-example = "spicy_qc.main:example"
 
 [build-system]
 requires = ["uv_build>=0.10.11,<0.11.0"]

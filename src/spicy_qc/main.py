@@ -82,7 +82,7 @@ def show_spicyqc_dialog(
     dialog.exec()
 
 
-def main():
+def example():
     # App needs to be intanciated here, because some widgets are creating within the configuration
     app = get_qt_app()  # noqa: F841
     tags, criterions = get_config_from_path(Path(__file__).parent / "example_criterions")
@@ -97,4 +97,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    example()

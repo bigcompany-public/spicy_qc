@@ -7,10 +7,10 @@ from spicy_qc.gui.utils import format_widgets
 from spicy_qc.widgets.assistant_widget import AssistantWidget
 
 
-def detect_objects_with_non_manifold_faces(criterion: Criterion):
+def detect_non_manifold_geometries(criterion: Criterion):
     elements = ["cat", "ball", "house", "car"]
     for element in elements:
-        criterion.add_warning(Warning("Geometry contains non-manifold faces", element))
+        criterion.add_warning(Warning("Geometry is non-manifold", element))
 
 
 class MyCustomAssistant(AssistantWidget):
@@ -41,9 +41,9 @@ class MyCustomAssistant(AssistantWidget):
 
 
 criterion = Criterion(
-    label="Non-Manifold Faces",
-    description="This criterion detects non-manifold faces in geometries",
-    verify_callback=detect_objects_with_non_manifold_faces,
+    label="Non-Manifold Geometries",
+    description="This criterion detects non-manifold geometries in the scene",
+    verify_callback=detect_non_manifold_geometries,
     tags=["mesh"],
     is_optional=False,
     assistant_widget=MyCustomAssistant,

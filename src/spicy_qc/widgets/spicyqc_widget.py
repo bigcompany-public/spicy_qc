@@ -72,6 +72,9 @@ class SpicyQcWidget(QWidget):
                 raise ValueError(f'Tag "{tag_name}" cannot be used multiple times')
 
     def create_no_tags_tag(self):
+        tag_names = [tag.tag for tag in self.tags]
+        if "no tags" in tag_names:
+            return
         tag = Tag(tag="no tags", tag_icon="mdi.tag-off", tag_color="#8C96A0")
         self.tags.append(tag)
 

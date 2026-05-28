@@ -264,9 +264,20 @@ class CriterionWidget(QFrame):
     def verify(self):
         self.criterion.verify()
         self.update_status_label()
+        self.update_status_column()
         self.update_stdout_line_edit()
         self.update_assistant_widget()
         self.spicy_qc_widget.update_visible_columns()
+
+    def update_status_column(self):
+        statuses_order = [
+            CriterionStatus.WAITING,
+            CriterionStatus.OK,
+            CriterionStatus.WARNING,
+            CriterionStatus.ERROR,
+        ]
+        index_str = str(statuses_order.index(self.criterion.status)).zfill(2)
+        self.table_widget.item(self.current_row, self.table_widget._status_column_index).setText(index_str)
 
     def setup_signals(self):
         self.verify_button.clicked.connect(self.verify_button_clicked)

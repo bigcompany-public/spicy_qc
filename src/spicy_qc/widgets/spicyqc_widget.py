@@ -135,8 +135,8 @@ class SpicyQcWidget(QWidget):
             self.table_widget.setRowHidden(row, not self.should_be_visible(criterion_widget))
 
     def create_criterion_widgets(self):
-        for criterion in self.criterions:
-            self.add_criterion_widget(criterion)
+        for i, criterion in enumerate(self.criterions):
+            self.add_criterion_widget(i, criterion)
 
     def should_be_visible(self, criterion_widget: CriterionWidget) -> bool:
         return (
@@ -186,7 +186,7 @@ class SpicyQcWidget(QWidget):
     def selected_tag_names(self) -> list[str]:
         return self.tag_filter_widget.selected_tags
 
-    def add_criterion_widget(self, criterion: Criterion):
+    def add_criterion_widget(self, index: int, criterion: Criterion):
         criterion_widget = CriterionWidget(criterion=criterion, spicy_qc_widget=self)
         self.criterion_widgets.append(criterion_widget)
         row_number = self.table_widget.rowCount()
@@ -196,6 +196,15 @@ class SpicyQcWidget(QWidget):
         label_item = QTableWidgetItem()
         label_item.setText(criterion_widget.criterion.label)
         self.table_widget.setItem(row_number, self.table_widget._label_column_index, label_item)
+
+        # Index item
+        index_item = QTableWidgetItem()
+        index_item.setText(str(index).zfill(5))
+        self.table_widget.setItem(row_number, self.table_widget._index_column_index, index_item)
+
+        # Status item
+        status_item = QTableWidgetItem()
+        self.table_widget.setItem(row_number, self.table_widget._status_column_index, status_item)
 
         # criterion item
         criterion_item = CriterionTableItem()
@@ -211,9 +220,16 @@ class SpicyQcWidget(QWidget):
         # Update row height once all widgets are properly inserted to the table
         criterion_widget.update_row_height()
 
+        # Update status
+        criterion_widget.update_status_column()
+
     @property
     def selected_criterion_widgets(self) -> list[CriterionWidget]:
-        return [item.criterion_widget for item in self.table_widget.selectedItems()]
+        widgets = []
+        for item in self.table_widget.selectedItems():
+            if isinstance(item, CriterionTableItem):
+                widgets.append(item.criterion_widget)
+        return widgets
 
     def verify_selected_criterions(self):
         for criterion_widget in self.selected_criterion_widgets:

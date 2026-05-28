@@ -36,6 +36,21 @@ class TableMenu(QMenu):
         action.setIcon(qtawesome.icon("mdi.arrow-collapse-vertical", color=THEME["icon_color"]))
         action.triggered.connect(self.collapse_all)
 
+        # Sort by name
+        action = self.addAction("Sort By Name")
+        action.setIcon(qtawesome.icon("fa5s.sort-alpha-down", color=THEME["icon_color"]))
+        action.triggered.connect(self.sort_by_name)
+
+        # Sort by status
+        action = self.addAction("Sort By Status")
+        action.setIcon(qtawesome.icon("mdi.sort-bool-ascending-variant", color=THEME["icon_color"]))
+        action.triggered.connect(self.sort_by_status)
+
+        # Disable sorting
+        action = self.addAction("Disable Sorting")
+        action.setIcon(qtawesome.icon("mdi6.sort-variant-off", color=THEME["icon_color"]))
+        action.triggered.connect(self.sort_by_index)
+
     def hide_valid_criterions(self):
         self.table_widget.show_valid_criterions = False
         self.spicy_qc_widget.update_visible_columns()
@@ -50,14 +65,25 @@ class TableMenu(QMenu):
             criterion_widget.toggle_assistant_button.collapse_frame()
             criterion_widget.toggle_documentation_button.collapse_frame()
 
+    def sort_by_status(self):
+        self.table_widget.sortByColumn(self.table_widget._status_column_index, Qt.SortOrder.AscendingOrder)
+
+    def sort_by_name(self):
+        self.table_widget.sortByColumn(self.table_widget._label_column_index, Qt.SortOrder.AscendingOrder)
+
+    def sort_by_index(self):
+        self.table_widget.sortByColumn(self.table_widget._index_column_index, Qt.SortOrder.AscendingOrder)
+
 
 class CriterionTableWidget(QTableWidget):
     def __init__(self, spicy_qc_widget: SpicyQcWidget) -> None:
         super().__init__(spicy_qc_widget)
         self.spicy_qc_widget = spicy_qc_widget
         self.show_valid_criterions = True
-        self._columns = ["label", "criterion"]
+        self._columns = ["label", "index", "status", "criterion"]
         self._label_column_index = self._columns.index("label")
+        self._index_column_index = self._columns.index("index")
+        self._status_column_index = self._columns.index("status")
         self._criterion_column_index = self._columns.index("criterion")
         self.setSortingEnabled(True)
         self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)

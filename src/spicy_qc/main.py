@@ -62,7 +62,7 @@ def get_criterions_from_path(path: Path) -> list[Criterion]:
 
 def show_spicyqc_dialog(
     criterions: list[Criterion],
-    tags: list[Tag],
+    tags: list[Tag] | None = None,
     tag_selection: list[str] | None = None,
     tag_whitelist: list[str] | None = None,
     tag_blacklist: list[str] | None = None,

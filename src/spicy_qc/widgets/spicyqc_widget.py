@@ -20,7 +20,7 @@ class SpicyQcWidget(QWidget):
     def __init__(
         self,
         criterions: list[Criterion],
-        tags: list[Tag],
+        tags: list[Tag] | None = None,
         tag_selection: list[str] | None = None,
         tag_whitelist: list[str] | None = None,
         tag_blacklist: list[str] | None = None,
@@ -28,13 +28,14 @@ class SpicyQcWidget(QWidget):
     ):
         super().__init__()
         self.criterions = criterions
-        self.tags = tags
+        self.tags = tags or []
         self.tag_selection = tag_selection
         self.tag_whitelist = tag_whitelist
         self.tag_blacklist = tag_blacklist
         self.lock = lock
-        self.ensure_unique_tags()
+        self.create_no_tags_tag()
         self.create_missing_tags()
+        self.ensure_unique_tags()
         self.filter_tags()
         self.criterion_widgets: list[CriterionWidget] = []
         self.setup_ui()
@@ -69,6 +70,10 @@ class SpicyQcWidget(QWidget):
             number = tag_names.count(tag_name)
             if number > 1:
                 raise ValueError(f'Tag "{tag_name}" cannot be used multiple times')
+
+    def create_no_tags_tag(self):
+        tag = Tag(tag="no tags", tag_icon="mdi.tag-off", tag_color="#8C96A0")
+        self.tags.append(tag)
 
     def create_missing_tags(self):
         colors = [

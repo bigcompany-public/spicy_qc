@@ -45,7 +45,7 @@ class Criterion:
         self.label = label
         self.description = description
         self.verify_callback = verify_callback
-        self.tags = tags or []
+        self.tags = tags or ["no tags"]
         self.is_optional = is_optional
         self.assistant_widget = assistant_widget
 

@@ -11,7 +11,8 @@ dependencies = [
     "PySide6",
     "QtAwesome",
     "Markdown",
-    "emoji"
+    "emoji",
+    "pyqt-toast-notification"
 ]
 
 [project.optional-dependencies]

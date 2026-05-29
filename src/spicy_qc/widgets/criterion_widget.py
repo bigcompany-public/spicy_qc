@@ -265,7 +265,7 @@ class CriterionWidget(QFrame):
         self.criterion.verify()
         self.update_status_label()
         self.update_status_column()
-        self.update_stdout_line_edit()
+        self.update_stdout_text()
         self.update_assistant_widget()
         self.spicy_qc_widget.update_visible_columns()
 
@@ -306,7 +306,7 @@ class CriterionWidget(QFrame):
             self.table_widget.clearSelection()
             self.table_widget.selectRow(self.current_row)
 
-    def update_stdout_line_edit(self):
+    def update_stdout_text(self):
         self.stdout_view.setPlainText(self.criterion.logs)
 
     def update_row_height(self):

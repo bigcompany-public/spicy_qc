@@ -5,11 +5,13 @@ import io
 import sys
 import time
 import traceback
-from contextlib import redirect_stdout
 from dataclasses import dataclass
 from enum import StrEnum, auto
+from functools import wraps
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Type
+
+from pyqttoast import Toast, ToastPreset
 
 if TYPE_CHECKING:
     from spicy_qc.widgets.assistant_widget import AssistantWidget
@@ -80,10 +82,10 @@ class Criterion:
 
     def run_verification_while_capturing_stdout(self):
         print("." * 30)
-        f = CaptureStdout(sys.stdout)
-        with redirect_stdout(f):
+        with CaptureStdout() as stdout:
             self.run_verification_with_timer()
-        self.logs = f.getvalue().strip()
+
+        self.logs = stdout.text()
 
     def run_verification_with_timer(self):
         start_time = time.perf_counter()
@@ -111,14 +113,57 @@ class Warning:
         self.element = element
 
 
-class CaptureStdout(io.StringIO):
-    """A stream that writes to both an internal buffer and a target stream."""
+class CaptureStdout:
+    """Context manager that captures stdout while still writing to the original stream."""
 
-    def __init__(self, target):
-        super().__init__()
-        self._target: io.StringIO = target
+    def __init__(self):
+        self._buffer = io.StringIO()
+        self._original_stdout = None
+
+    def __enter__(self):
+        self._original_stdout = sys.stdout
+        self._tee = _TeeStream(self._original_stdout, self._buffer)
+        sys.stdout = self._tee
+        return self
+
+    def __exit__(self, *args):
+        sys.stdout = self._original_stdout
+        self._tee = None
+
+    def text(self) -> str:
+        return self._buffer.getvalue().strip()
+
+
+class _TeeStream(io.RawIOBase):
+    """Internal stream that writes to both a target and a buffer."""
+
+    def __init__(self, target, buffer):
+        self._target = target
+        self._buffer = buffer
 
     def write(self, s):
         self._target.write(s)
         self._target.flush()
-        return super().write(s)
+        self._buffer.write(s)
+        return len(s)
+
+
+def monitor_action(func):
+    @wraps(func)
+    def wrapper(self: AssistantWidget, *args, **kwargs):
+        with CaptureStdout() as stdout:
+            try:
+                func(self, *args, **kwargs)
+            except Exception:
+                print(traceback.format_exc())
+                toast = Toast(self.spicy_qc_widget)
+                toast.setPositionRelativeToWidget(self.spicy_qc_widget)
+                toast.setDuration(3000)
+                toast.setTitle("SpicyQC")
+                toast.setText("An error occured. Check logs for more details")
+                toast.applyPreset(ToastPreset.ERROR_DARK)  # Apply style preset
+                toast.show()
+        self.criterion_widget.criterion.logs += f"\n{stdout.text()}"
+        self.criterion_widget.update_stdout_text()
+
+    return wrapper

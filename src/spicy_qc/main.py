@@ -8,17 +8,17 @@ from spicy_qc.widgets.container import ContainerDialog, ContainerWidget
 from spicy_qc.widgets.spicyqc_widget import SpicyQcWidget
 
 
-def get_config_from_path(path: Path | str) -> tuple[list[Tag], list[Criterion]]:
+def get_config_from_path(path: Path | str) -> tuple[list[Criterion], list[Tag]]:
     path = Path(path)
-    tags = get_tags_from_path(path)
     criterions = get_criterions_from_path(path)
-    return (tags, criterions)
+    tags = get_tags_from_path(path)
+    return (criterions, tags)
 
 
 def get_tags_from_path(path: Path) -> list[Tag]:
     py_file = path / "tags.py"
     if not py_file.exists():
-        raise FileNotFoundError(f"Path does not exist: {py_file}")
+        return []
 
     # Import py file as module
     module_name = "spicyqc.tags"
@@ -85,7 +85,7 @@ def show_spicyqc_dialog(
 def example():
     # App needs to be intanciated here, because some widgets are creating within the configuration
     app = get_qt_app()  # noqa: F841
-    tags, criterions = get_config_from_path(Path(__file__).parent / "example_criterions")
+    criterions, tags = get_config_from_path(Path(__file__).parent / "example_criterions")
     show_spicyqc_dialog(
         criterions,
         tags,

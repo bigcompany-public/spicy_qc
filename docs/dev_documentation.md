@@ -158,7 +158,10 @@ To help the end user with comprehensive documentation, you can use the documenta
     ![first_criterion_error](img/first_criterion_documentation.png)
 
 !!! tip
-    The documentation uses the markdown syntax, so you can display way more than just text.
+    The documentation widget uses the markdown syntax, so you can display way more than just text.  
+    It also supports html tags and css properties, so you can get creative.
+
+    For more information, see the [Markdown Reference](./markdown.md)
     
     === "python"
         ```python
@@ -185,9 +188,181 @@ To help the end user with comprehensive documentation, you can use the documenta
         ![first_criterion_markdown](img/first_criterion_markdown.png)
 
 
-
 ## Adding Tags
 
-## Configuration Discovery
+`Tags` are a useful way of regrouping Criterion into categories, so users can easily filter them.
 
-## Example Files
+To add a Tag to our Criterion, simply use the `tag` argument when instancing your Criterion.
+
+```python
+criterion = Criterion(
+    label="Simple Criterion",
+    description="Criterion for demonstration purposes",
+    verify_callback=verify_stuff,
+    assistant_widget=CustomAssistant,
+    documentation=documentation,
+    tags=["demo", "my first criterion"]
+)
+```
+
+!!! success "Result"
+    The newly created Tags will appear in the Filter Area. The Criterion will appear if one of the tags is selected.
+
+    ![first_criterion_tags](img/first_criterion_tags.png)
+
+### Customizing Tags
+
+When creating tags on the fly like we just did, tags are assigned a random color and a placeholder icon. Tags are actually fully customizable and allow a better user experience (in addition to a few style point :sunglasses:).
+
+To achieve this, define `Tag` objects and fetch them to the `show_spicyqc_dialog` function.
+
+```
+from spicy_qc import Tag
+
+tags = [
+    Tag(
+        tag="demo",
+        tag_color="#25B920",
+        tag_icon="fa5s.question-circle",
+        tag_text_color="#070A2C",
+        tag_icon_color="#070A2C",
+    ),
+    Tag(
+        tag="my first criterion",
+        tag_color="#C31010",
+        tag_icon="ei.fire",
+        tag_text_color="#FFD900",
+        tag_icon_color="#FFD900",
+    ),
+]
+
+show_spicyqc_dialog(criterions=[criterion], tags=tags)
+```
+
+!!! success "Result"
+    ![custom_tags](img/custom_tags.png)
+
+    **Important Note** : These colors were picked for demonstration purposes, please don't do this at home :pray:
+
+### About QtAwesome Icons
+
+SpicyQC uses QtAwesome for its menu icons. To browse available icons, open `qta-browser`, either from your python script, or from the virtual environment where `spicy-qc` is installed.
+
+=== "python"
+    ```python
+    from spicy_qc import show_qta_browser
+
+    show_qta_browser()
+    ```
+
+=== "venv"
+    ```
+    qta-browser
+    ```
+
+![qta_browser](img/qta_browser.png)
+
+From there, you can select the icon of your choice and copy its code.
+
+## Using A Configuration Directory
+
+You now know how to create Criterions, but how about managing dozens or hundreds ?
+SpicyQC has a way of creating an entire configuration by walking a directory.
+
+- First, create a directory. For instance `my_spicyqc_config` :open_file_folder:
+- In it, create a subfolder for each Criterion you want to create. For instance `my_first_criterion` :open_file_folder:
+- In each subfolder:
+    - Create a `.py` file that has **the same name as the parent folder**. For instance `my_first_criterion.py` :memo:
+
+        !!! warning
+            It is important that the variable that contains the Criterion is named **exactly `criterion`**
+
+        !!! info ""
+            This python file contains the definition of the Criterion, and its optional AssistantWidget
+
+            === "my_first_criterion.py"
+                ```python
+                from functools import partial
+
+                from PySide6.QtWidgets import QLabel, QPushButton, QSizePolicy, QVBoxLayout
+
+                from spicy_qc import (
+                    AssistantWidget,
+                    Criterion,
+                    CriterionStatus,
+                    Warning,
+                    monitor_action,
+                )
+
+
+                def verify_stuff(criterion: Criterion):
+                    print("Verifying Stuff...")
+                    criterion.add_warning(Warning("Oh no, something went wrong with a few elements in the scene"))
+                    criterion.add_warning(Warning(message='The object "Knife" has a problem', element="knife"))
+                    criterion.add_warning(Warning(message='The object "Spoon" has a problem', element="spoon"))
+                    criterion.add_warning(Warning(message='The object "Fork" has a problem', element="fork"))
+                    print("Failure...")
+
+
+                class CustomAssistant(AssistantWidget):
+                    def __init__(self, criterion: Criterion):
+                        super().__init__(criterion)
+                        layout = QVBoxLayout(self)
+                        self.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
+
+                        if self.criterion.status == CriterionStatus.WAITING:
+                            layout.addWidget(QLabel("The verification has not been done yet"))
+                            return
+
+                        for warning in self.criterion.warnings:
+                            if warning.element:
+                                button = QPushButton(f"Fix {warning.element}")
+                                layout.addWidget(button)
+                                button.clicked.connect(partial(self.fix_element, warning.element))
+
+                    @monitor_action
+                    def fix_element(self, element):
+                        print(f"Fixing {element}")
+                        raise RuntimeError("Oh no, something bad happened!")
+
+
+                criterion = Criterion(
+                    label="Simple Criterion",
+                    description="Criterion for demonstration purposes",
+                    verify_callback=verify_stuff,
+                    assistant_widget=CustomAssistant,
+                    tags=["demo", "my first criterion"],
+                )
+
+                ```
+
+    - (Optional) Create a `.md` file that has **the same name as the parent folder**. For instance `my_first_criterion.md` :memo:
+
+        !!! info
+            This file contains the documentation or your Criterion.
+
+            === "my_first_criterion.md"
+                ```markdown
+                # My First Criterion Documentation
+
+                This is a separate documentation file to demonstrate how the configuration directory works.
+                ```
+    
+    - (Optional) Images used by the documentation can be directly dropped into the `my_first_criterion` :open_file_folder: folder.
+    
+        !!! tip
+            You may also create a subfolder (for instance `img`) to store your images. For more informations, see [Markdown Reference / Images](./markdown.md/#images)
+
+- (Optional) In the `my_spicyqc_config` :open_file_folder: folder, you may also add a `tags.py` file.
+
+    !!! info
+        This file contains the customization of your `Tags`
+
+        === "tags.py"
+            ```python
+            # My First Criterion Documentation
+
+            This is a separate documentation file to demonstrate how the configuration directory works.
+            ```
+
+### Example Configuration Directory

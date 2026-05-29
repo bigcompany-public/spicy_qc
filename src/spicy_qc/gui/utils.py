@@ -1,5 +1,6 @@
 import json
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -8,6 +9,10 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QIcon
 from PySide6.QtWidgets import QApplication
+
+
+def show_qta_browser():
+    subprocess.Popen([sys.executable, "-m", "qtawesome.icon_browser"])
 
 
 def get_spicyqc_icon() -> QIcon:

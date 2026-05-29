@@ -172,6 +172,18 @@ Normal Text<sup>Superscript text</sup>
 
 ![markdown_table](img/markdown_table.png)
 
-# Known Limitations
+## Known Limitations
 
-## Youtube Video Integration
+### Youtube Video Integration
+
+At the moment, Youtube video integration does not work properly.
+The following code block is *valid*, but youtube refuses the connection because PySide6's QWebEngineView is not recognized as a proper web browser.
+
+```
+<iframe width="560" height="315"
+src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+title="YouTube video player"
+frameborder="0"
+allowfullscreen>
+</iframe>
+```

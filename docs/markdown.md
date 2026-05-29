@@ -70,7 +70,7 @@ Normal Text<sup>Superscript text</sup>
     ![icon](spicyqc_icon.png)
 
     relative to the python file:
-    ![icon](./docs/img/spicyqc_icon.png)
+    ![icon](./img/spicyqc_icon.png)
 
     hard-written path:
     ![icon](D:/gitWorkspace/spicy_qc/spicyqc_icon.png)

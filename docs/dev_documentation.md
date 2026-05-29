@@ -267,15 +267,16 @@ From there, you can select the icon of your choice and copy its code.
 ## Using A Configuration Directory
 
 You now know how to create Criterions, but how about managing dozens or hundreds ?
-SpicyQC has a way of creating an entire configuration by walking a directory.
+SpicyQC has a way of creating an entire configuration by walking a directory, that should look something like this:
+
+![config_directory](img/config_directory.png)
+
+Let's build it from scratch.
 
 - First, create a directory. For instance `my_spicyqc_config` :open_file_folder:
 - In it, create a subfolder for each Criterion you want to create. For instance `my_first_criterion` :open_file_folder:
 - In each subfolder:
     - Create a `.py` file that has **the same name as the parent folder**. For instance `my_first_criterion.py` :memo:
-
-        !!! warning
-            It is important that the variable that contains the Criterion is named **exactly `criterion`**
 
         !!! info ""
             This python file contains the definition of the Criterion, and its optional AssistantWidget
@@ -335,6 +336,9 @@ SpicyQC has a way of creating an entire configuration by walking a directory.
                 )
 
                 ```
+        
+        !!! warning
+            It is important that the variable that contains the Criterion is named **exactly `criterion`**
 
     - (Optional) Create a `.md` file that has **the same name as the parent folder**. For instance `my_first_criterion.md` :memo:
 
@@ -346,12 +350,14 @@ SpicyQC has a way of creating an entire configuration by walking a directory.
                 # My First Criterion Documentation
 
                 This is a separate documentation file to demonstrate how the configuration directory works.
+
+                ![icon](spicyqc_icon.png)
                 ```
     
     - (Optional) Images used by the documentation can be directly dropped into the `my_first_criterion` :open_file_folder: folder.
     
         !!! tip
-            You may also create a subfolder (for instance `img`) to store your images. For more informations, see [Markdown Reference / Images](./markdown.md/#images)
+            You may also create a subfolder (for instance `img`) to store your images. For more informations, see [Markdown Reference / Images](./markdown/#images)
 
 - (Optional) In the `my_spicyqc_config` :open_file_folder: folder, you may also add a `tags.py` file.
 
@@ -360,9 +366,51 @@ SpicyQC has a way of creating an entire configuration by walking a directory.
 
         === "tags.py"
             ```python
-            # My First Criterion Documentation
+            from spicy_qc import Tag
 
-            This is a separate documentation file to demonstrate how the configuration directory works.
+            tags = [
+                Tag(
+                    tag="demo",
+                    tag_color="#25B920",
+                    tag_icon="fa5s.question-circle",
+                    tag_text_color="#070A2C",
+                    tag_icon_color="#070A2C",
+                ),
+                Tag(
+                    tag="my first criterion",
+                    tag_color="#C31010",
+                    tag_icon="ei.fire",
+                    tag_text_color="#FFD900",
+                    tag_icon_color="#FFD900",
+                ),
+                Tag(
+                    tag="my second criterion",
+                    tag_color="#FFD900",
+                    tag_icon="ei.fire",
+                    tag_text_color="#C31010",
+                    tag_icon_color="#C31010",
+                ),
+            ]
             ```
+        
+        !!! warning
+            It is important that the variable that contains the Tag list is named **exactly `tags`**
+    
+At this point, you can add as many Criterions as you want.
+
+![config_directory](img/config_directory.png)
+
+!!! success "Result"
+    To see the result, fetch your configuration and open SpicyQC.
+    === "python"
+        ```python
+        from spicy_qc import get_config_from_path, get_qt_app, show_spicyqc_dialog
+
+        app = get_qt_app()
+        criterions, tags = get_config_from_path(r"D:\gitWorkspace\spicy_qc\my_spicyqc_config")
+        show_spicyqc_dialog(criterions, tags)
+        ```
+
+    ![config_directory_result](img/config_directory_result.png)
 
 ### Example Configuration Directory

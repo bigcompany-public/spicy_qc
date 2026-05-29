@@ -3,9 +3,7 @@ from typing import Any
 
 from PySide6.QtWidgets import QFrame, QGridLayout, QLabel, QPushButton, QSizePolicy, QVBoxLayout
 
-from spicy_qc.api import Criterion, CriterionStatus, Warning
-from spicy_qc.gui.utils import format_widgets
-from spicy_qc.widgets.assistant_widget import AssistantWidget
+from spicy_qc import AssistantWidget, Criterion, CriterionStatus, Warning, format_widgets, monitor_action
 
 
 def function_with_warnings(criterion: Criterion):
@@ -82,14 +80,18 @@ class MyCustomAssistant(AssistantWidget):
         # In this example, it will recursively look into all child widgets, and set the height of buttons
         format_widgets(self)
 
+    @monitor_action
     def fix(self, element: Any):
         print(f"Fixing {element}")
 
+    @monitor_action
     def select(self, element: Any):
         print(f"Selecting {element}")
 
+    @monitor_action
     def troubleshoot(self, element: Any):
         print(f"Troubleshooting {element}")
+        raise RuntimeError("There is nothing to troubleshoot. Let's demonstrate how exceptions are handled instead")
 
 
 criterion = Criterion(

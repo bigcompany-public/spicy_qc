@@ -2,8 +2,7 @@ import os
 
 from PySide6.QtWidgets import QLabel, QPushButton, QVBoxLayout
 
-from spicy_qc.api import Criterion, CriterionStatus, Warning
-from spicy_qc.widgets.assistant_widget import AssistantWidget
+from spicy_qc import AssistantWidget, Criterion, CriterionStatus, Warning, monitor_action
 
 PROPER_FRAMERATE = 25.0
 
@@ -46,6 +45,7 @@ class Assistant(AssistantWidget):
         layout.addWidget(button)
         button.clicked.connect(self.set_proper_framerate)
 
+    @monitor_action
     def set_proper_framerate(self):
         os.environ["SQPICYQC_FRAMERATE"] = str(PROPER_FRAMERATE)
         # Re-run the verification to update the status/assistant

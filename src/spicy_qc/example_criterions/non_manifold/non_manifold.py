@@ -2,9 +2,7 @@ from functools import partial
 
 from PySide6.QtWidgets import QGridLayout, QLabel, QPushButton, QSizePolicy
 
-from spicy_qc.api import Criterion, CriterionStatus, Warning
-from spicy_qc.gui.utils import format_widgets
-from spicy_qc.widgets.assistant_widget import AssistantWidget
+from spicy_qc import AssistantWidget, Criterion, CriterionStatus, Warning, format_widgets
 
 
 def detect_non_manifold_geometries(criterion: Criterion):

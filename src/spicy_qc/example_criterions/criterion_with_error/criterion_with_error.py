@@ -1,4 +1,4 @@
-from spicy_qc.api import Criterion
+from spicy_qc import Criterion
 
 
 def function_with_error(criterion: Criterion):

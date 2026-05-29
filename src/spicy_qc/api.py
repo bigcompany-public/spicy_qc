@@ -80,7 +80,7 @@ class Criterion:
 
     def run_verification_while_capturing_stdout(self):
         print("." * 30)
-        f = TeeStream(sys.stdout)
+        f = CaptureStdout(sys.stdout)
         with redirect_stdout(f):
             self.run_verification_with_timer()
         self.logs = f.getvalue().strip()
@@ -111,7 +111,7 @@ class Warning:
         self.element = element
 
 
-class TeeStream(io.StringIO):
+class CaptureStdout(io.StringIO):
     """A stream that writes to both an internal buffer and a target stream."""
 
     def __init__(self, target):

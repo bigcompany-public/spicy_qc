@@ -414,3 +414,34 @@ At this point, you can add as many Criterions as you want.
     ![config_directory_result](img/config_directory_result.png)
 
 ### Example Configuration Directory
+
+SpicyQC provides an example configuration directory in "spicy-qc/example_criterions" :open_file_folder:
+
+Feel free to look inside to see how Criterions, Tags, and Documentations are setup.
+
+!!! tip "The `extensive_example` Criterion basically shows all the features of SpicyQC, if you are looking for a boilerplate, it looks like a good place to start with."
+
+The example config of SpicyQC can be opened like this:
+
+=== "python"
+    ```python
+    from spicy_qc import example
+
+    example()
+    ```
+
+=== "uv"
+    ```
+    uv run spicy-qc-example
+    ```
+
+![example](img/example.png)
+
+
+## Tips And Tricks
+
+### Selection Preset
+
+### Locked Filters
+
+### Widget Style

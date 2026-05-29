@@ -20,6 +20,7 @@ Here are the key design choices that make SpicyQC different from other solutions
 ## What SpicyQC Is Not?
 
 - SpicyQC is **not a "one-button-fix-all" solution**: Experience shows these kind of design make the artist press on the "Fix All" button and pray, without understanding what happens under the hood. Instead, the assistant aims at making fixes more enlightened and deliberate.
+- SpicyQC is **not an exporter**: its sole purpose is to verify Quality Criterions. We believe it is smarter to decorellate the "quality check" and the "publish" as two separate steps. 
 
 ---
 

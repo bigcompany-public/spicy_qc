@@ -22,6 +22,7 @@ nav = [
     { "QuickStart" = "quickstart.md" },
     { "User Documentation" = "user_documentation.md" },
     { "TD/Dev Documentation" = "dev_documentation.md" },
+    { "Markdown Reference" = "markdown.md" },
 ]
 
 # Palette toggle for dark mode

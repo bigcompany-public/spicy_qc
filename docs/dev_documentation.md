@@ -112,3 +112,82 @@ Let's now provide the user an Assistant widget to help him resolve the issues re
 
     show_spicyqc_dialog(criterions=[criterion])
     ```
+
+!!! success "Here is the result"
+    ![first_criterion_assistant](img/first_criterion_assistant.png)
+
+### Monitoring Actions
+
+Having working buttons is a good start, but a simple decorator will make it even better
+
+=== "python"
+    ```python
+    from spicy_qc import monitor_action
+
+    @monitor_action
+    def fix_element(self, element):
+        print(f"Fixing {element}")
+    ```
+
+!!! success "Here is the result"
+    Now, the lines that are printed out correcty end up in the logs
+
+    ![first_criterion_logs](img/first_criterion_logs.png)
+
+    Moreover, Exceptions will correctly be handled and sent to logs. A notification will also show up, so the error doesn't silently occur without the user noticing.
+
+    ![first_criterion_error](img/first_criterion_error.png)
+
+
+## Adding Documentation
+
+To help the end user with comprehensive documentation, you can use the documentation argument when creating your `Criterion`
+
+=== "python"
+    ```python
+    criterion = Criterion(
+        label="Simple Criterion",
+        description="Criterion for demonstration purposes",
+        verify_callback=verify_stuff,
+        assistant_widget=CustomAssistant,
+        documentation="This documentation explains how the Criterion works",
+    )
+    ```
+
+!!! success "A `Show Documentation` button now appears and displays your text"
+    ![first_criterion_error](img/first_criterion_documentation.png)
+
+!!! tip
+    The documentation uses the markdown syntax, so you can display way more than just text.
+    
+    === "python"
+        ```python
+        documentation = """
+        # My Documentation
+
+        **this text is bold**
+
+        !!! tip
+            This is a `Tip` admonition
+
+        <img src="ok.gif" alt="image" width="150"/>
+        """
+
+        criterion = Criterion(
+            label="Simple Criterion",
+            description="Criterion for demonstration purposes",
+            verify_callback=verify_stuff,
+            assistant_widget=CustomAssistant,
+            documentation=documentation,
+        )
+        ```
+
+        ![first_criterion_markdown](img/first_criterion_markdown.png)
+
+
+
+## Adding Tags
+
+## Configuration Discovery
+
+## Example Files

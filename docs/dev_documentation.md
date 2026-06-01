@@ -2,7 +2,7 @@
 
 ## Creating Criterions
 
-Create a new `spicyqc_config.py` :memo: file so we can create our first `Criterion`. We will start with the most simple Criterion as possible and iterate over it.
+Create a new `spicyqc_config.py` file so we can create our first `Criterion`. We'll start with the simplest Criterion possible and iterate from there.
 
 === "python"
     ```python
@@ -38,7 +38,7 @@ In this piece of code, we have done three things so far:
 
 ## Adding Warnings
 
-The `criterion` argument of the `verify_stuff` function now comes into play. We can use it to raise warnings.
+The `criterion` argument of the `verify_stuff` function now comes into play. We can use it to report warnings.
 
 === "python"
     ```python
@@ -69,7 +69,7 @@ The `criterion` argument of the `verify_stuff` function now comes into play. We 
 
 ## Creating An Assistant
 
-Let's now provide the user an Assistant widget to help him resolve the issues revealed by the verification process.
+Let's provide the user with an Assistant widget to help resolve the issues revealed by verification.
 
 === "python"
     ```python
@@ -133,7 +133,7 @@ Having working buttons is a good start, but a simple decorator will make it even
     ```
 
 !!! success "Result"
-    Now, the lines that are printed out correcty end up in the logs
+    Now, the lines that are printed out correctly end up in the logs
 
     ![first_criterion_logs](img/first_criterion_logs.png)
 
@@ -144,7 +144,7 @@ Having working buttons is a good start, but a simple decorator will make it even
 
 ## Adding Documentation
 
-To help the end user with comprehensive documentation, you can use the documentation argument when creating your `Criterion`
+To give the end user comprehensive documentation, you can use the documentation argument when creating your `Criterion`
 
 === "python"
     ```python
@@ -193,9 +193,9 @@ To help the end user with comprehensive documentation, you can use the documenta
 
 ## Adding Tags
 
-`Tags` are a useful way of regrouping Criterion into categories, so users can easily filter them.
+`Tags` are a useful way of grouping Criterions into categories, so users can easily filter them.
 
-To add a Tag to our Criterion, simply use the `tag` argument when instancing your Criterion.
+To add a Tag to our Criterion, simply use the `tag` argument when instantiating your Criterion.
 
 ```python
 criterion = Criterion(

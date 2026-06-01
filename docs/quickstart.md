@@ -23,7 +23,7 @@ Use your preferred package installer:
 ## Quick Start
 
 To try it quickly, SpicyQC provides an example configuration for demonstration purposes.
-As Criterions have no real value in a vacuum, these example are pure placeholders to demonstrate what it **could** be, given the context of a 3D scene or a file to inspect.
+As Criterions have no real value in a vacuum, these examples are pure placeholders to demonstrate what they **could** be given the context of a 3D scene or a file to inspect.
 
 === "python"
     ```python

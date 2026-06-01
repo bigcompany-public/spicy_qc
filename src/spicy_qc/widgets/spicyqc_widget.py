@@ -1,7 +1,5 @@
 """Main widget for the SpicyQC application, including filtering and criterion display."""
 
-import random
-
 from PySide6.QtWidgets import (
     QFormLayout,
     QFrame,
@@ -105,23 +103,36 @@ class SpicyQcWidget(QWidget):
         provided tag list. This method creates default tag objects for them.
         """
         colors = [
-            "#29C2AD",
-            "#2D9C5B",
-            "#327EBD",
-            "#2660A1",
-            "#352F8F",
-            "#A623B8",
-            "#8D2455",
-            "#AA2A2A",
-            "#C06C0C",
-            "#97AF11",
+            "#1f78b4",
+            "#ff7f0e",
+            "#d62728",
+            "#2ca02c",
+            "#9467bd",
+            "#17becf",
+            "#e377c2",
+            "#8c564b",
+            "#bcbd22",
+            "#e6550d",
+            "#393b79",
+            "#7b4173",
+            "#31a354",
+            "#ff9896",
+            "#56a5d4",
+            "#8c6d31",
         ]
-        for criterion in self.criterions:
-            for tag_name in criterion.tags:
-                available_tag_names = [tag.tag for tag in self.tags]
-                if tag_name not in available_tag_names:
-                    new_tag = Tag(tag=tag_name, tag_color=random.choice(colors))
-                    self.tags.append(new_tag)
+
+        available_tag_names = [tag.tag for tag in self.tags]
+        color_count = len(colors)
+        next_color_index = 0
+
+        all_tags_names = sorted({tag_name for criterion in self.criterions for tag_name in criterion.tags})
+
+        for tag_name in all_tags_names:
+            if tag_name not in available_tag_names:
+                color = colors[next_color_index % color_count]
+                self.tags.append(Tag(tag=tag_name, tag_color=color))
+                available_tag_names.append(tag_name)
+                next_color_index += 1
 
     def filter_tags(self):
         """Filter tag definitions so only tags used by criterions remain."""

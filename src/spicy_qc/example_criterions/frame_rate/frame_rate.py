@@ -59,4 +59,5 @@ criterion = Criterion(
     tags=["scene"],
     assistant_widget=Assistant,
     documentation=documentation,
+    is_optional=True,
 )

@@ -12,4 +12,5 @@ criterion = Criterion(
     description="This criterion will raise an error",
     verify_callback=function_with_error,
     tags=["example"],
+    is_optional=True,
 )

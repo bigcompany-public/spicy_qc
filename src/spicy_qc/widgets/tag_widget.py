@@ -1,3 +1,5 @@
+"""Widget used to render tag badges and preview tag colors."""
+
 import qtawesome
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
@@ -11,7 +13,15 @@ from spicy_qc.api import Tag
 
 
 class TagWidget(QFrame):
+    """A small badge-style widget used to display tag names and icons."""
+
     def __init__(self, tag: Tag, size: int = 22):
+        """Initialize a tag badge widget.
+
+        Args:
+            tag: Tag metadata used to render the widget.
+            size: Base height and icon size of the badge.
+        """
         super().__init__()
         self.tag = tag
         self._size = size
@@ -33,6 +43,11 @@ class TagWidget(QFrame):
         self.setLayout(layout)
 
     def update_preview(self, greyed_out: bool = False):
+        """Update the widget appearance to reflect the tag state.
+
+        Args:
+            greyed_out: Whether to render the badge in a disabled style.
+        """
         # Adjust colors if greyed out
         tag_color = self.tag.tag_color
         tag_text_color = self.tag.tag_text_color

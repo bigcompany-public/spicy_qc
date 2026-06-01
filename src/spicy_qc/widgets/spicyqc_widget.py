@@ -1,3 +1,5 @@
+"""Main widget for the SpicyQC application, including filtering and criterion display."""
+
 import random
 
 from PySide6.QtWidgets import (
@@ -17,6 +19,8 @@ from spicy_qc.widgets.tag_filter_widget import TagFilterWidget, TagListWidget
 
 
 class SpicyQcWidget(QWidget):
+    """Widget that renders Criterions, Tags, and filtering controls."""
+
     def __init__(
         self,
         criterions: list[Criterion],
@@ -26,6 +30,16 @@ class SpicyQcWidget(QWidget):
         tag_blacklist: list[str] | None = None,
         lock: bool = False,
     ):
+        """Initialize the main SpicyQC widget.
+
+        Args:
+            criterions: List of Criterions to display.
+            tags: Optional tag definitions used to render filters.
+            tag_selection: Optional tags to select initially.
+            tag_whitelist: Optional allowed tags filter.
+            tag_blacklist: Optional excluded tags filter.
+            lock: Whether to hide filtering controls.
+        """
         super().__init__()
         self.criterions = criterions
         self.tags = tags or []
@@ -43,6 +57,7 @@ class SpicyQcWidget(QWidget):
         self.setup_signals()
 
     def setup_initial_state(self):
+        """Create widgets and apply initial selection and visibility state."""
         self.create_criterion_widgets()
         self.select_tags()
         if self.lock:
@@ -50,6 +65,10 @@ class SpicyQcWidget(QWidget):
         self.update_visible_columns()
 
     def select_tags(self):
+        """Select tags in the filter widget based on initial selection.
+
+        When no selection is provided, all tags are selected by default.
+        """
         # If no selection is provided, select all
         tag_list_widget = self.tag_filter_widget.list_widget
         if not self.tag_selection:
@@ -64,7 +83,7 @@ class SpicyQcWidget(QWidget):
                 item.setSelected(True)
 
     def ensure_unique_tags(self):
-        """Raises an error if a tag name is used multiple time"""
+        """Validate that tag names are unique across the provided tag list."""
         tag_names = [tag.tag for tag in self.tags]
         for tag_name in tag_names:
             number = tag_names.count(tag_name)
@@ -72,6 +91,7 @@ class SpicyQcWidget(QWidget):
                 raise ValueError(f'Tag "{tag_name}" cannot be used multiple times')
 
     def create_no_tags_tag(self):
+        """Ensure a default "no tags" entry exists for criterions without tags."""
         tag_names = [tag.tag for tag in self.tags]
         if "no tags" in tag_names:
             return
@@ -79,6 +99,11 @@ class SpicyQcWidget(QWidget):
         self.tags.append(tag)
 
     def create_missing_tags(self):
+        """Create tag objects for any tag names referenced by criterions.
+
+        Criterions may reference tags that are not defined explicitly in the
+        provided tag list. This method creates default tag objects for them.
+        """
         colors = [
             "#29C2AD",
             "#2D9C5B",
@@ -99,7 +124,7 @@ class SpicyQcWidget(QWidget):
                     self.tags.append(new_tag)
 
     def filter_tags(self):
-        """Filters out tags that are used in no Criterion"""
+        """Filter tag definitions so only tags used by criterions remain."""
         available_tag_names = [tag.tag for tag in self.tags]
         filtered_tag_names: set[str] = set()
 
@@ -123,6 +148,7 @@ class SpicyQcWidget(QWidget):
         self.tags = [tag for tag in self.tags if tag.tag in filtered_tag_names]
 
     def setup_ui(self):
+        """Build the main UI layout for the SpicyQC widget."""
         self.setMinimumHeight(600)
         self._layout = QVBoxLayout(self)
         self._layout.setContentsMargins(3, 3, 3, 3)
@@ -168,12 +194,15 @@ class SpicyQcWidget(QWidget):
         criterion_frame_layout.addWidget(self.table_widget)
 
     def setup_signals(self):
+        """Connect UI signals to widget callbacks."""
         self.line_edit_search.textChanged.connect(self.line_edit_search_changed)
 
     def line_edit_search_changed(self):
+        """Handle search input changes by updating visible criterions."""
         self.update_visible_columns()
 
     def update_visible_columns(self):
+        """Update table row visibility based on current filters and search."""
         for row in range(self.table_widget.rowCount()):
             criterion_widget = self.table_widget.get_criterion_widget_at_row(row)
             self.table_widget.setRowHidden(row, not self.should_be_visible(criterion_widget))
@@ -183,6 +212,7 @@ class SpicyQcWidget(QWidget):
             self.add_criterion_widget(i, criterion)
 
     def should_be_visible(self, criterion_widget: CriterionWidget) -> bool:
+        """Return whether a criterion widget should be visible now."""
         return (
             self.matches_tag_selection(criterion_widget)
             and self.matches_search(criterion_widget)
@@ -190,9 +220,11 @@ class SpicyQcWidget(QWidget):
         )
 
     def matches_tag_selection(self, criterion_widget: CriterionWidget) -> bool:
+        """Return whether the criterion matches the current selected tags."""
         return any([tag in self.selected_tag_names for tag in criterion_widget.criterion.tags])
 
     def matches_search(self, criterion_widget: CriterionWidget) -> bool:
+        """Return whether the criterion matches the active search text."""
         search_string = self.line_edit_search.text().lower().strip()
         if not search_string:
             return True
@@ -202,6 +234,7 @@ class SpicyQcWidget(QWidget):
         )
 
     def should_be_hidden_if_valid(self, criterion_widget: CriterionWidget) -> bool:
+        """Return whether safe-to-hide rules allow the criterion to be displayed."""
         if self.table_widget.show_valid_criterions:
             return True
         if criterion_widget.criterion.status == CriterionStatus.OK:
@@ -210,6 +243,11 @@ class SpicyQcWidget(QWidget):
             return True
 
     def get_criterion_widgets_to_show(self) -> list[CriterionWidget]:
+        """Return the criterion widgets that match the current filters.
+
+        This helper is used for retrieving the filtered set of widgets
+        without altering the visible table rows directly.
+        """
         filtered_widgets: list[CriterionWidget] = []
 
         # Filter by tag
@@ -231,9 +269,11 @@ class SpicyQcWidget(QWidget):
 
     @property
     def selected_tag_names(self) -> list[str]:
+        """Return the currently selected tag names in the tag filter."""
         return self.tag_filter_widget.selected_tags
 
     def add_criterion_widget(self, index: int, criterion: Criterion):
+        """Instantiate and insert a criterion widget into the table."""
         criterion_widget = CriterionWidget(criterion=criterion, spicy_qc_widget=self)
         self.criterion_widgets.append(criterion_widget)
         row_number = self.table_widget.rowCount()
@@ -272,6 +312,7 @@ class SpicyQcWidget(QWidget):
 
     @property
     def selected_criterion_widgets(self) -> list[CriterionWidget]:
+        """Return the currently selected criterion widgets from the table."""
         widgets = []
         for item in self.table_widget.selectedItems():
             if isinstance(item, CriterionTableItem):
@@ -279,5 +320,6 @@ class SpicyQcWidget(QWidget):
         return widgets
 
     def verify_selected_criterions(self):
+        """Verify all currently selected criterions in the table."""
         for criterion_widget in self.selected_criterion_widgets:
             criterion_widget.verify()

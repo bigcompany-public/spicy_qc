@@ -1,3 +1,5 @@
+"""Table widget and context menu helpers for SpicyQC criterion display."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, List
@@ -16,7 +18,10 @@ THEME = get_theme()
 
 
 class TableMenu(QMenu):
+    """Context menu shown on right-click within the criterion table."""
+
     def __init__(self, table_widget: CriterionTableWidget):
+        """Create a table context menu for the given table widget."""
         super().__init__(table_widget)
         self.table_widget = table_widget
         self.spicy_qc_widget = table_widget.spicy_qc_widget
@@ -52,31 +57,38 @@ class TableMenu(QMenu):
         action.triggered.connect(self.sort_by_index)
 
     def hide_valid_criterions(self):
+        """Hide criterions that are currently marked as valid."""
         self.table_widget.show_valid_criterions = False
         self.spicy_qc_widget.update_visible_columns()
 
     def show_valid_criterions(self):
+        """Show criterions that are currently marked as valid."""
         self.table_widget.show_valid_criterions = True
         self.spicy_qc_widget.update_visible_columns()
 
     def collapse_all(self):
+        """Collapse all expandable criterion sections in the table."""
         for criterion_widget in self.spicy_qc_widget.criterion_widgets:
             criterion_widget.toggle_logs_button.collapse_frame()
             criterion_widget.toggle_assistant_button.collapse_frame()
             criterion_widget.toggle_documentation_button.collapse_frame()
 
     def sort_by_status(self):
+        """Sort table rows by criterion status."""
         self.table_widget.sortByColumn(self.table_widget._status_column_index, Qt.SortOrder.AscendingOrder)
 
     def sort_by_name(self):
+        """Sort table rows by criterion label."""
         self.table_widget.sortByColumn(self.table_widget._label_column_index, Qt.SortOrder.AscendingOrder)
 
     def sort_by_index(self):
+        """Restore the original table order by index."""
         self.table_widget.sortByColumn(self.table_widget._index_column_index, Qt.SortOrder.AscendingOrder)
 
 
 class CriterionTableWidget(QTableWidget):
     def __init__(self, spicy_qc_widget: SpicyQcWidget) -> None:
+        """Initialize the criterion table used by the main widget."""
         super().__init__(spicy_qc_widget)
         self.spicy_qc_widget = spicy_qc_widget
         self.show_valid_criterions = True
@@ -104,17 +116,18 @@ class CriterionTableWidget(QTableWidget):
             self.setColumnHidden(i, True)
 
     def get_criterion_widget_at_row(self, row: int) -> CriterionWidget:
+        """Return the criterion widget contained in the given row."""
         return self.get_criterion_item_at_row(row).criterion_widget
 
     def get_criterion_item_at_row(self, row: int) -> CriterionTableItem:
+        """Return the hidden criterion table item for the given row."""
         return self.item(row, self._criterion_column_index)  # type: ignore
 
     def selectedItems(self) -> List[CriterionTableItem]:
+        """Return the list of selected table items with correct typing."""
         return super().selectedItems()  # type: ignore
 
     def contextMenuEvent(self, event: QEvent):
-        """
-        This method pops a Qmenu widget when the user right clicks on the table
-        """
+        """Show the table context menu when the user right-clicks."""
         menu = TableMenu(self)
         menu.exec_(event.globalPos())

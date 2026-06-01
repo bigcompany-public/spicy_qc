@@ -1,3 +1,5 @@
+"""Widgets that render individual criterions and their interactive controls."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -29,12 +31,21 @@ FRAME_HEIGHT = 300
 
 
 class ToggleAreaButton(QPushButton):
+    """Button that toggles visibility of a collapsible section inside a criterion."""
+
     def __init__(
         self,
         area_name: str,
         criterion_widget: CriterionWidget,
         collapsible_frame: QFrame,
     ):
+        """Initialize a collapsible area toggle button.
+
+        Args:
+            area_name: Human-readable section name.
+            criterion_widget: Parent criterion widget.
+            collapsible_frame: Frame that is shown or hidden.
+        """
         super().__init__()
         self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.setProperty("status", "invisible")
@@ -49,48 +60,55 @@ class ToggleAreaButton(QPushButton):
         self.setStyleSheet("margin:0px; padding:3px")
 
     def expand_frame(self):
+        """Expand the associated collapsible frame."""
         self.collapsed = False
         self.update()
 
     def collapse_frame(self):
+        """Collapse the associated collapsible frame."""
         self.collapsed = True
         self.update()
 
     def toggle_area(self):
+        """Toggle the expanded/collapsed state of the area."""
         self.collapsed = not self.collapsed
         self.update()
 
     def update(self):
+        """Refresh button appearance and update row height."""
         self.update_look()
         self.update_collapsible_frame()
         self.criterion_widget.update_row_height()
 
     def update_look(self):
+        """Update the button label and icon based on current state."""
         self.setText(f"Show {self.area_name}" if self.collapsed else f"Hide {self.area_name}")
         icon_name = "fa6s.caret-right" if self.collapsed else "fa6s.caret-down"
         self.setIcon(qtawesome.icon(icon_name, color=THEME["icon_color"]))
 
     def update_collapsible_frame(self):
+        """Show or hide the target collapsible frame."""
         self.collapsible_frame.setHidden(self.collapsed)
 
 
 class CriterionTableItem(QTableWidgetItem):
-    """
-    This object is only here to recover the row of the selected criterion widget
-    CriterionWidgets have no row() method, so we need to find a workaround
-    """
+    """Table item used as a bridge to retrieve the row from a criterion widget."""
 
     def __init__(self):
+        """Initialize a criterion table item capable of storing a widget reference."""
         super().__init__()
         self.criterion_widget: CriterionWidget
 
 
 class CriterionWidget(QFrame):
+    """UI representation of a single Criterion inside the SpicyQC table."""
+
     def __init__(
         self,
         criterion: Criterion,
         spicy_qc_widget: SpicyQcWidget,
     ):
+        """Create a Criterion widget and its collapsible sections."""
         super().__init__()
         self.spicy_qc_widget = spicy_qc_widget
         self.table_widget = self.spicy_qc_widget.table_widget
@@ -104,6 +122,7 @@ class CriterionWidget(QFrame):
         self.setup_signals()
 
     def setup_ui(self):
+        """Build the internal user interface for the Criterion widget."""
         # Add a container with a few pixels of margin to make the selection more visually clear
         layout = QVBoxLayout(self)
         layout.setContentsMargins(3, 0, 0, 0)
@@ -232,6 +251,7 @@ class CriterionWidget(QFrame):
         format_widgets(self)
 
     def update_assistant_widget(self):
+        """Create or refresh the assistant widget area for the criterion."""
         if not self.criterion.assistant_widget:
             return
 
@@ -262,6 +282,7 @@ class CriterionWidget(QFrame):
         self.update_row_height()
 
     def verify(self):
+        """Trigger verification of the criterion and refresh related views."""
         self.criterion.verify()
         self.update_status_label()
         self.update_status_column()
@@ -270,6 +291,7 @@ class CriterionWidget(QFrame):
         self.spicy_qc_widget.update_visible_columns()
 
     def update_status_column(self):
+        """Update the hidden status column used for table sorting."""
         statuses_order = [
             CriterionStatus.WAITING,
             CriterionStatus.OK,
@@ -277,39 +299,47 @@ class CriterionWidget(QFrame):
             CriterionStatus.ERROR,
         ]
         index_str = str(statuses_order.index(self.criterion.status)).zfill(2)
-        self.table_widget.item(self.current_row, self.table_widget._status_column_index).setText(index_str)
+        self.table_widget.item(self.current_row, self.table_widget._status_column_index).setText(index_str)  # type: ignore
 
     def setup_signals(self):
+        """Connect widget button signals to the appropriate handlers."""
         self.verify_button.clicked.connect(self.verify_button_clicked)
         self.toggle_assistant_button.clicked.connect(self.assistant_button_clicked)
         self.toggle_logs_button.clicked.connect(self.logs_button_clicked)
         self.toggle_documentation_button.clicked.connect(self.documentation_button_clicked)
 
     def assistant_button_clicked(self):
+        """Handle the assistant toggle button click."""
         self.toggle_documentation_button.collapse_frame()
         self.toggle_logs_button.collapse_frame()
 
     def documentation_button_clicked(self):
+        """Handle the documentation toggle button click."""
         self.toggle_assistant_button.collapse_frame()
         self.toggle_logs_button.collapse_frame()
 
     def logs_button_clicked(self):
+        """Handle the logs toggle button click."""
         self.toggle_documentation_button.collapse_frame()
         self.toggle_assistant_button.collapse_frame()
 
     def verify_button_clicked(self):
+        """Handle the verify button click and verify selected criterions."""
         self.update_selection()
         self.spicy_qc_widget.verify_selected_criterions()
 
     def update_selection(self):
+        """Ensure this Criterion widget is selected when verify is triggered."""
         if self not in self.spicy_qc_widget.selected_criterion_widgets:
             self.table_widget.clearSelection()
             self.table_widget.selectRow(self.current_row)
 
     def update_stdout_text(self):
+        """Refresh the log text displayed in the log panel."""
         self.stdout_view.setPlainText(self.criterion.logs)
 
     def update_row_height(self):
+        """Recompute and set the table row height based on visible sections."""
         top_height = 80
         assistant_height = self.assistant_frame.height() + self.main_layout.spacing()
         assistant_multiplier = int(self.assistant_frame.isVisible())
@@ -327,6 +357,7 @@ class CriterionWidget(QFrame):
         self.table_widget.setRowHeight(self.current_row, total_height)
 
     def update_status_label(self):
+        """Update the visible status icon based on the criterion status."""
         color = {
             CriterionStatus.WAITING: THEME["disabled"],
             CriterionStatus.OK: THEME["ok"],
@@ -347,6 +378,7 @@ class CriterionWidget(QFrame):
 
     @property
     def current_row(self) -> int:
+        """Return the table row index for this criterion widget."""
         if not self.table_item:
             return -1
         return self.table_item.row()

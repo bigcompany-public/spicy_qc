@@ -1,3 +1,5 @@
+"""Application entrypoints for loading SpicyQC configuration and launching the dialog."""
+
 import importlib.util
 import sys
 from pathlib import Path
@@ -9,6 +11,14 @@ from spicy_qc.widgets.spicyqc_widget import SpicyQcWidget
 
 
 def get_config_from_path(path: Path | str) -> tuple[list[Criterion], list[Tag]]:
+    """Load criterion and tag configuration from a directory.
+
+    Args:
+        path: Path to a SpicyQC configuration folder.
+
+    Returns:
+        A tuple containing the list of criterions and the list of tags.
+    """
     path = Path(path)
     criterions = get_criterions_from_path(path)
     tags = get_tags_from_path(path)
@@ -16,6 +26,14 @@ def get_config_from_path(path: Path | str) -> tuple[list[Criterion], list[Tag]]:
 
 
 def get_tags_from_path(path: Path) -> list[Tag]:
+    """Load tags from a tags.py configuration file.
+
+    Args:
+        path: Path to the configuration folder.
+
+    Returns:
+        A list of Tag instances defined in the tags.py file.
+    """
     py_file = path / "tags.py"
     if not py_file.exists():
         return []
@@ -33,6 +51,14 @@ def get_tags_from_path(path: Path) -> list[Tag]:
 
 
 def get_criterions_from_path(path: Path) -> list[Criterion]:
+    """Load criterions from subdirectories under the given path.
+
+    Args:
+        path: Path containing criterion subdirectories.
+
+    Returns:
+        A list of Criterion instances imported from each subdirectory.
+    """
     criterions = []
     if not path.exists():
         raise FileNotFoundError(f"Path does not exist: {path}")
@@ -68,6 +94,16 @@ def show_spicyqc_dialog(
     tag_blacklist: list[str] | None = None,
     lock: bool = False,
 ) -> None:
+    """Create and display the SpicyQC dialog.
+
+    Args:
+        criterions: Criterions to display in the dialog.
+        tags: Optional global tag definitions.
+        tag_selection: Optional tags to preselect.
+        tag_whitelist: Optional tag names allowed for display.
+        tag_blacklist: Optional tag names excluded from display.
+        lock: Whether to lock the filtering controls.
+    """
     app = get_qt_app()  # noqa: F841
     widget = SpicyQcWidget(
         criterions=criterions,
@@ -83,6 +119,7 @@ def show_spicyqc_dialog(
 
 
 def example():
+    """Load the example configuration and launch the SpicyQC UI."""
     # App needs to be intanciated here, because some widgets are creating within the configuration
     app = get_qt_app()  # noqa: F841
     criterions, tags = get_config_from_path(Path(__file__).parent / "example_criterions")

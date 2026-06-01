@@ -1,3 +1,5 @@
+"""Render markdown documentation for criterions inside a Qt web view."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -158,6 +160,7 @@ CSS = f"""
 
 
 def markdown_to_html(md_text: str, css: str) -> str:
+    """Convert markdown text into an HTML page with embedded CSS."""
     body = markdown.markdown(md_text, extensions=["tables", "fenced_code", "toc", "admonition", "attr_list", "nl2br"])
     return f"""<!DOCTYPE html>
 <html>
@@ -188,7 +191,10 @@ SCROLLBAR_CSS = f"""
 
 
 class DocPage(QWebEnginePage):
+    """Custom QWebEnginePage that intercepts link clicks and opens them externally."""
+
     def acceptNavigationRequest(self, url, nav_type, is_main_frame):
+        """Intercept navigation requests and open external links outside the app."""
         # Let the initial load through, intercept link clicks
         if nav_type == QWebEnginePage.NavigationType.NavigationTypeLinkClicked:
             QDesktopServices.openUrl(url)
@@ -197,7 +203,10 @@ class DocPage(QWebEnginePage):
 
 
 class DocumentationWidget(QWebEngineView):
+    """A widget that displays criterion markdown documentation in a web view."""
+
     def __init__(self, criterion_widget: CriterionWidget):
+        """Initialize the documentation widget for a given Criterion."""
         self.criterion_widget = criterion_widget
         super().__init__()
         self.setPage(DocPage(self))
@@ -205,6 +214,7 @@ class DocumentationWidget(QWebEngineView):
         self.loadFinished.connect(self._inject_scrollbar_style)
 
     def _inject_scrollbar_style(self, ok):
+        """Inject custom scrollbar CSS after the page successfully loads."""
         if not ok:
             return
         js = f"""
@@ -215,6 +225,7 @@ class DocumentationWidget(QWebEngineView):
         self.page().runJavaScript(js)
 
     def load_markdown(self):
+        """Load markdown from the criterion documentation and render it as HTML."""
         doc_file = self.criterion_widget.criterion._source_file.with_name("documentation.md")
         md_text = self.criterion_widget.criterion.documentation
         md_text = emoji.emojize(md_text, language="alias")

@@ -1,3 +1,10 @@
+"""Utility helpers for Qt application initialization, theming, and icons.
+
+This module contains helper functions used throughout SpicyQC to create the
+Qt application, load theme colors, configure widgets, and build consistent
+icons and styles.
+"""
+
 import json
 import os
 import subprocess
@@ -12,10 +19,12 @@ from PySide6.QtWidgets import QApplication
 
 
 def show_qta_browser():
+    """Open the QtAwesome icon browser in a new subprocess."""
     subprocess.Popen([sys.executable, "-m", "qtawesome.icon_browser"])
 
 
 def get_spicyqc_icon() -> QIcon:
+    """Return the default SpicyQC application icon."""
     icon = qtawesome.icon(
         "fa5s.square",
         "mdi6.silverware-clean",
@@ -28,14 +37,11 @@ def get_spicyqc_icon() -> QIcon:
 
 
 def get_qt_app():
-    """Get Qt application.
-
-    The function initializes new Qt application if it is not already
-    initialized. It also sets some attributes to the application to
-    ensure that it will work properly on high DPI displays.
+    """Get or initialize the Qt application instance.
 
     Returns:
-        QtWidgets.QApplication: Current Qt application.
+        QtWidgets.QApplication: The existing or newly created application
+            instance.
     """
 
     app = QApplication.instance()
@@ -58,18 +64,28 @@ def get_qt_app():
 
 
 def get_icon(name: str) -> Path:
+    """Return the filesystem path for a named application icon."""
     root_dir = Path(__file__).parent
     path = root_dir / f"gui/icons/{name}"
     return path
 
 
 def get_qta_icon(name: str, scale_factor: float = 1.0, color: str | None = None) -> QIcon:
+    """Return a QtAwesome icon with optional color and scale customization."""
     if not color:
         color = get_theme()["active"]
     return qtawesome.icon(name, scale_factor=scale_factor, color=color)
 
 
 def get_theme(theme: str = "dark") -> dict[str, str]:
+    """Load a theme configuration and resolve named colors.
+
+    Args:
+        theme: Theme name to load from themes.json.
+
+    Returns:
+        A mapping of CSS token names to resolved hex color values.
+    """
     gui_dir = Path(__file__).parent
     path = gui_dir / "themes.json"
     with path.open("r") as json_file:
@@ -79,8 +95,14 @@ def get_theme(theme: str = "dark") -> dict[str, str]:
 
 
 def translate_colors(theme: str, theme_data: dict[str, str]) -> dict[str, str]:
-    """
-    This method converts color names into hex values
+    """Translate theme color names into actual hex color values.
+
+    Args:
+        theme: Name of the theme section in colors.json.
+        theme_data: Mapping of UI tokens to color names.
+
+    Returns:
+        A mapping of UI tokens to resolved color hex strings.
     """
     gui_dir = Path(__file__).parent
     path = gui_dir / "colors.json"
@@ -91,11 +113,10 @@ def translate_colors(theme: str, theme_data: dict[str, str]) -> dict[str, str]:
 
 
 def format_widgets(widget: QtWidgets.QWidget):
-    """
-    Formats all the widgets and the widgets within it
-    Warning : order is important, since some widgets are derived from others
-    (in that regard, one can use a tighter operator than isinstance, such as
-    if type(widget) == ...)
+    """Recursively apply consistent sizing and appearance to Qt widgets.
+
+    Args:
+        widget: Root widget whose children should be formatted.
     """
     minimum_width = 130
     minimum_height = 25
@@ -139,12 +160,20 @@ def format_widgets(widget: QtWidgets.QWidget):
 
         # QFrame
         elif isinstance(child_widget, QtWidgets.QFrame):
-            child_widget.setFrameShape(QtWidgets.QFrame.NoFrame)
+            child_widget.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
 
-        format_widgets(child_widget)
+        format_widgets(child_widget)  # type: ignore
 
 
 def get_stylesheet(theme: str = "dark"):
+    """Return the application stylesheet for the requested theme.
+
+    Args:
+        theme: Name of the theme to apply.
+
+    Returns:
+        A stylesheet string suitable for use with Qt widgets.
+    """
     colors = get_theme(theme)
     stylesheet = f"""
     QMainWindow {{

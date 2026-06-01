@@ -93,7 +93,7 @@ def show_spicyqc_dialog(
     tag_whitelist: list[str] | None = None,
     tag_blacklist: list[str] | None = None,
     lock: bool = False,
-) -> None:
+) -> SpicyQcWidget:
     """Create and display the SpicyQC dialog.
 
     Args:
@@ -103,6 +103,9 @@ def show_spicyqc_dialog(
         tag_whitelist: Optional tag names allowed for display.
         tag_blacklist: Optional tag names excluded from display.
         lock: Whether to lock the filtering controls.
+
+    Returns:
+        SpicyQCWidget instance
     """
     app = get_qt_app()  # noqa: F841
     widget = SpicyQcWidget(
@@ -116,14 +119,20 @@ def show_spicyqc_dialog(
     container = ContainerWidget(widget, title="SpicyQC", icon=get_spicyqc_icon())
     dialog = ContainerDialog(container)
     dialog.exec()
+    return widget
 
 
-def example():
-    """Load the example configuration and launch the SpicyQC UI."""
+def example() -> SpicyQcWidget:
+    """
+    Load the example configuration and launch the SpicyQC UI.
+
+    Returns:
+        SpicyQCWidget instance
+    """
     # App needs to be intanciated here, because some widgets are creating within the configuration
     app = get_qt_app()  # noqa: F841
     criterions, tags = get_config_from_path(Path(__file__).parent / "example_criterions")
-    show_spicyqc_dialog(
+    return show_spicyqc_dialog(
         criterions,
         tags,
         tag_selection=["scene", "mesh"],

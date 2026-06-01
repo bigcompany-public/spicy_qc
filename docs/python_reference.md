@@ -18,7 +18,9 @@
 
 ## Widgets
 
+::: spicy_qc.SpicyQcWidget
 ::: spicy_qc.AssistantWidget
+
 
 ## Decorators
 

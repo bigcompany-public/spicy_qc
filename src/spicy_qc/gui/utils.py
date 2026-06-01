@@ -389,6 +389,7 @@ def get_stylesheet(theme: str = "dark"):
         color:{colors["text_color"]};
         border-radius:5px;
         background-color:transparent;
+        min-height: 25px;
     }}
     QPushButton::hover {{
         border-color:{colors["button_hover"]};

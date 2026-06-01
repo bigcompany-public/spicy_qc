@@ -31,7 +31,7 @@ In this piece of code, we have done three things so far:
 - Create a new Criterion, in which we fetch the function we wrote.
 - Open the SpicyQC dialog, to which we provided our sole Criterion.
 
-!!! success "Here is the result"
+!!! success "Result"
     SpicyQC shows up, with a single Criterion that has a name, a description, and a working `Verify` button.
 
     ![first_criterion_1](img/first_criterion_1.png)
@@ -61,7 +61,7 @@ The `criterion` argument of the `verify_stuff` function now comes into play. We 
     show_spicyqc_dialog(criterions=[criterion])
     ```
 
-!!! success "Here is the result"
+!!! success "Result"
     The `Verify` button now displays the ![warning](img/warning.png) label, and the warnings can be read in the logs.
 
     ![first_criterion_2](img/first_criterion_2.png)
@@ -113,8 +113,11 @@ Let's now provide the user an Assistant widget to help him resolve the issues re
     show_spicyqc_dialog(criterions=[criterion])
     ```
 
-!!! success "Here is the result"
+!!! success "Result"
     ![first_criterion_assistant](img/first_criterion_assistant.png)
+
+??? question "What is the purpose of `partial`?"
+    See [functools.partial On Button Clicked Signal](#functoolspartial-on-button-clicked-signal)
 
 ### Monitoring Actions
 
@@ -129,7 +132,7 @@ Having working buttons is a good start, but a simple decorator will make it even
         print(f"Fixing {element}")
     ```
 
-!!! success "Here is the result"
+!!! success "Result"
     Now, the lines that are printed out correcty end up in the logs
 
     ![first_criterion_logs](img/first_criterion_logs.png)
@@ -438,10 +441,123 @@ The example config of SpicyQC can be opened like this:
 ![example](img/example.png)
 
 
-## Tips And Tricks
+## Filtering
+
+As you will add a lot of Criterions and Tags, SpicyQC may stard to become overwhelming for users. Hopefully, there are several main ways to make the UI less bloated, and to nudge the user into using specific Criterions.
 
 ### Selection Preset
 
-### Locked Filters
+You can specify which tags will already been selected when SpicyQC opens using the `tag_selection` argument.
+
+=== "python"
+    ```python
+    from spicy_qc import get_config_from_path, get_qt_app, show_spicyqc_dialog
+
+    app = get_qt_app()
+    criterions, tags = get_config_from_path(r"D:\gitWorkspace\spicy_qc\my_spicyqc_config")
+    show_spicyqc_dialog(criterions, tags, tag_selection=["my first criterion"])
+    ```
+
+!!! success "Result"
+    ![criterion_selection](img/criterion_selection.png)
+
+### Whitelisting And Blacklisting Tags
+
+You can specify Tags that won't show altogether when SpicyQC opens using the `tag_whitelist` and `tag_blacklist` arguments.
+
+=== "python"
+    ```python
+    from spicy_qc import get_config_from_path, get_qt_app, show_spicyqc_dialog
+
+    app = get_qt_app()
+    criterions, tags = get_config_from_path(r"D:\gitWorkspace\spicy_qc\my_spicyqc_config")
+    show_spicyqc_dialog(criterions, tags, tag_whitelist=["my first criterion"])
+    ```
+
+!!! success "Result"
+    ![whitelist](img/whitelist.png)
+
+!!! tip
+    The difference between these two options is that the `tag_selection` argument selects the Tags, but the others can still be accessed by the user, while the `tag_whitelist` and `tag_blacklist` arguments prevent Criterions from appearing altogether.
+
+### Locked Criterion Sets
+
+Sometimes, you just don't want the user to filter out Criterions, and you need to restrict the scope of what can be done with SpicyQC. To achieve this, you can use the `lock` attribute, and the filter area will be gone.
+
+=== "python"
+    ```python
+    from spicy_qc import get_config_from_path, get_qt_app, show_spicyqc_dialog
+
+    app = get_qt_app()
+    criterions, tags = get_config_from_path(r"D:\gitWorkspace\spicy_qc\my_spicyqc_config")
+    show_spicyqc_dialog(criterions, tags, tag_whitelist=["my first criterion"], lock=True)
+    ```
+
+!!! success "Result"
+    ![lock](img/lock.png)
+
+
+## Tips And Tricks
 
 ### Widget Style
+
+SpicyQC's stylesheet can use properties to give a specific look to widgets.
+Here are a few examples:
+
+```python
+# QFrame
+frame = QFrame()
+frame.setProperty("depth", "1")
+
+# QLabel
+h1_label = QLabel("H1 Heading")
+h1_label.setProperty("tag", "H1")
+h2_label = QLabel("H2 Heading")
+h2_label.setProperty("tag", "H2")
+important_label = QLabel("important text")
+important_label.setProperty("status", "important")
+warning_label = QLabel("warning text")
+warning_label.setProperty("status", "warning")
+error_label = QLabel("error text")
+error_label.setProperty("status", "error")
+secondary_label = QLabel("secondary text")
+secondary_label.setProperty("status", "secondary")
+ok_label = QLabel("ok text")
+ok_label.setProperty("status", "ok")
+
+# QPushButton
+important_button = QPushButton("Important Button")
+important_button.setProperty("status", "important")
+ok_button = QPushButton("Ok Button")
+ok_button.setProperty("status", "ok")
+danger_button = QPushButton("Danger Button")
+danger_button.setProperty("status", "danger")
+warning_button = QPushButton("Warning Button")
+warning_button.setProperty("status", "warning")
+error_button = QPushButton("Error Button")
+error_button.setProperty("status", "error")
+```
+
+!!! success "Result"
+    ![qt_properties](img/qt_properties.png)
+
+
+### functools.partial On Button Clicked Signal
+
+QPushButtons are normally not able to send arguments when clicked, which is a shame, since you may have a button for each of your element that needs to be fixed.
+
+Hopefully, there is a workaround : `functools.partial()`, which wraps around a function to enforce specific argument values. In out case, passing the element to fix to the function that will be triggered when the button is pressed.
+
+=== "python"
+    ```python
+    for warning in self.criterion.warnings:
+        if warning.element:
+            button = QPushButton(f"Fix {warning.element}")
+            layout.addWidget(button)
+            button.clicked.connect(partial(self.fix_element, warning.element))
+    
+    @monitor_action
+    def fix_element(self, element):
+        print(f"Fixing {element}")
+    ```
+

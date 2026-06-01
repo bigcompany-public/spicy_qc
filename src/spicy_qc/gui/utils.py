@@ -36,7 +36,7 @@ def get_spicyqc_icon() -> QIcon:
     return icon
 
 
-def get_qt_app():
+def get_qt_app() -> QApplication:
     """Get or initialize the Qt application instance.
 
     Returns:
@@ -60,7 +60,7 @@ def get_qt_app():
 
         app = QApplication(sys.argv)
 
-    return app
+    return app  # type: ignore
 
 
 def get_icon(name: str) -> Path:

@@ -334,3 +334,23 @@ class SpicyQcWidget(QWidget):
         """Verify all currently selected criterions in the table."""
         for criterion_widget in self.selected_criterion_widgets:
             criterion_widget.verify()
+
+    def criterions_are_valid(self, tags: list[str] | None = None, check_optional_criterions=False) -> bool:
+        """Return whether the current criterions are valid.
+
+        Args:
+            tags: Optional list of tag names to restrict the validation set.
+            check_optional_criterions: If False, optional criterions are excluded from validation.
+
+        Returns:
+            True when all applicable criterions have status :class:`CriterionStatus.OK`, otherwise False.
+        """
+        criterions = self.criterions.copy()
+
+        if tags:
+            criterions = [criterion for criterion in criterions if any([tag in tags for tag in criterion.tags])]
+
+        if not check_optional_criterions:
+            criterions = [criterion for criterion in criterions if not criterion.is_optional]
+
+        return all([criterion.status == CriterionStatus.OK for criterion in criterions])

@@ -340,7 +340,7 @@ class CriterionWidget(QFrame):
 
     def update_row_height(self):
         """Recompute and set the table row height based on visible sections."""
-        top_height = 80
+        top_height = 83
         assistant_height = self.assistant_frame.height() + self.main_layout.spacing()
         assistant_multiplier = int(self.assistant_frame.isVisible())
         log_height = self.log_frame.height() + self.main_layout.spacing()

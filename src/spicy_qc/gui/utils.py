@@ -274,6 +274,7 @@ def get_stylesheet(theme: str = "dark"):
         font-size:12px;
         background-color:{colors["bg_two"]};
         padding: 5px;
+        font-family: Consolas;
     }}
 
     QCheckBox {{

@@ -4,7 +4,7 @@
 
 SpicyQC is a Quality Control system with clear visual feedback, designed to help teams quickly identify, understand, and resolve issues during production.
 
-[**Read the documentation here**](https://bigcompany-public.github.io/spicyqc/).
+[**Read the documentation here**](https://bigcompany-public.github.io/spicy_qc/).
 
 ## Contact
 

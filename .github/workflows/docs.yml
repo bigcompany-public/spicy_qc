@@ -3,16 +3,10 @@ on:
   push:
     branches:
       - main
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
   deploy:
     environment:
@@ -20,15 +14,16 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
       - uses: actions/configure-pages@v5
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
       - run: pip install zensical mkdocstrings-python
-      - run: zensical build --clean
+      - run: zensical build --clean 
       - uses: actions/upload-pages-artifact@v4
         with:
           path: site
+          overwrite: true  # Replaces any existing artifact in case of previous failure
       - uses: actions/deploy-pages@v4
         id: deployment

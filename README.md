@@ -6,6 +6,8 @@ SpicyQC is a Quality Control system with clear visual feedback, designed to help
 
 [**Read the documentation here**](https://bigcompany-public.github.io/spicy_qc/).
 
+![spicyqc](docs/img/spicyqc.png)
+
 ## Contact
 
 - Tristan Languebien - tristan.languebien@bigcompany.fr

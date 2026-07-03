@@ -27,3 +27,5 @@ jobs:
           overwrite: true  # Replaces any existing artifact in case of previous failure
       - uses: actions/deploy-pages@v4
         id: deployment
+        with:
+          timeout: 30000
